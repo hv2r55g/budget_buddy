@@ -60,7 +60,24 @@ class _RootAppState extends State<RootApp> {
 
   Widget getBody() {
     return
-    Center(child: Text('hello'.tr));
+      Center(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('categories').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot doc = snapshot.data!.docs[index];
+                    String value = doc['Name'];
+                    return Text(value.tr);
+                  });
+            } else {
+              return const Text("No data");
+            }
+          },
+        ),
+      );
     // return IndexedStack(
     //   index: pageIndex,
     //   children: pages,

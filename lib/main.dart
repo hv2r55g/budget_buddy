@@ -23,7 +23,7 @@ void main() async {
     // ],
     debugShowCheckedModeBanner: false,
     translations: LocaleString(),
-    locale: Locale('en',''),
+    locale: Locale('nl',''),
 
 
     home: RootApp(),

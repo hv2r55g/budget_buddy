@@ -7,6 +7,9 @@ class LocaleString extends Translations {
         //ENGLISH LANGUAGE
         'en': {
           'hello': 'Hello World',
+          'Food': 'food',
+          'Rent': 'Rent',
+          'Utilities': 'Utilities',
           'message': 'Welcome to Proto Coders Point',
           'title': 'Flutter Language - Localization',
           'sub': 'Subscribe Now',
@@ -15,6 +18,9 @@ class LocaleString extends Translations {
         //HINDI LANGUAGE
         'nl': {
           'hello': 'hallokes',
+          'Food': 'eten',
+          'Utilities': 'water enzo',
+          'Rent': 'Huur',
           'message': 'bericht',
           'title': 'titel',
         },

@@ -1,8 +1,9 @@
+import 'package:budget_buddy/translations/locale_string.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:get/get.dart';
 
 import 'package:budget_buddy/pages/root_app.dart';
 import 'package:flutter/material.dart';
@@ -10,17 +11,21 @@ import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(
-    localizationsDelegates: const [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    supportedLocales: const [
-      Locale('en', ''),
-      Locale('nl', ''),
-    ],
+  runApp(GetMaterialApp(
+    // localizationsDelegates: const [
+    //   GlobalMaterialLocalizations.delegate,
+    //   GlobalWidgetsLocalizations.delegate,
+    //   GlobalCupertinoLocalizations.delegate,
+    // ],
+    // supportedLocales: const [
+    //   Locale('en', ''),
+    //   Locale('nl', ''),
+    // ],
     debugShowCheckedModeBanner: false,
+    translations: LocaleString(),
+    locale: Locale('en',''),
+
+
     home: RootApp(),
   ));
 }

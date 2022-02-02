@@ -3,8 +3,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:get/get.dart';
 
 class RootApp extends StatefulWidget {
+
+  final List locale =[
+    {'name':'ENGLISH','locale': Locale('en','')},
+    {'name':'NEDERLANDS','locale': Locale('nl','')},
+  ];
+  updateLanguage(Locale locale){
+    Get.back();
+    Get.updateLocale(locale);
+  }
+
   @override
   _RootAppState createState() => _RootAppState();
 }
@@ -48,10 +59,12 @@ class _RootAppState extends State<RootApp> {
   }
 
   Widget getBody() {
-    return IndexedStack(
-      index: pageIndex,
-      children: pages,
-    );
+    return
+    Center(child: Text('hello'.tr));
+    // return IndexedStack(
+    //   index: pageIndex,
+    //   children: pages,
+    // );
   }
 
   Widget getFooter() {

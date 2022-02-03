@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:get/get.dart';
 
-class RootApp extends StatefulWidget {
+import 'daily_page.dart';
 
-  final List locale =[
-    {'name':'ENGLISH','locale': Locale('en','')},
-    {'name':'NEDERLANDS','locale': Locale('nl','')},
+class RootApp extends StatefulWidget {
+  final List locale = [
+    {'name': 'ENGLISH', 'locale': Locale('en', '')},
+    {'name': 'NEDERLANDS', 'locale': Locale('nl', '')},
   ];
-  updateLanguage(Locale locale){
+
+  updateLanguage(Locale locale) {
     Get.back();
     Get.updateLocale(locale);
   }
@@ -24,6 +26,7 @@ class _RootAppState extends State<RootApp> {
   int pageIndex = 0;
   List<Widget> pages = [
     //list of pages
+    DailyPage(),
   ];
 
   @override
@@ -60,28 +63,28 @@ class _RootAppState extends State<RootApp> {
 
   Widget getBody() {
     return
-      Center(
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('categories').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot doc = snapshot.data!.docs[index];
-                    String value = doc['Name'];
-                    return Text(value.tr);
-                  });
-            } else {
-              return const Text("No data");
-            }
-          },
-        ),
-      );
-    // return IndexedStack(
-    //   index: pageIndex,
-    //   children: pages,
-    // );
+        // Center(
+        //   child: StreamBuilder<QuerySnapshot>(
+        //     stream: FirebaseFirestore.instance.collection('categories').snapshots(),
+        //     builder: (context, snapshot) {
+        //       if (snapshot.hasData) {
+        //         return ListView.builder(
+        //             itemCount: snapshot.data!.docs.length,
+        //             itemBuilder: (context, index) {
+        //               DocumentSnapshot doc = snapshot.data!.docs[index];
+        //               String value = doc['Name'];
+        //               return Text(value.tr);
+        //             });
+        //       } else {
+        //         return const Text("No data");
+        //       }
+        //     },
+        //   ),
+        // );
+        IndexedStack(
+      index: pageIndex,
+      children: pages,
+    );
   }
 
   Widget getFooter() {

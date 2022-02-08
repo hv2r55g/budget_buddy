@@ -28,7 +28,7 @@ class _RootAppState extends State<RootApp> {
   List<Widget> pages = [
     //list of pages
     DailyPage(),
-    CreateBudgetPage()
+    CreateBudgetPage(),
   ];
 
   @override

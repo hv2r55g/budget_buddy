@@ -1,6 +1,7 @@
 import 'package:budget_buddy/json/create_budget_json.dart';
 import 'package:budget_buddy/theme/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CreateBudgetPage extends StatefulWidget {
@@ -10,12 +11,15 @@ class CreateBudgetPage extends StatefulWidget {
 
 class _CreateBudgetPageState extends State<CreateBudgetPage> {
   int activeCategory = 0;
-  final TextEditingController _transactionName = TextEditingController(text: "");
-  final TextEditingController _transactionAmount = TextEditingController(text: "");
+  int _transactionNumber = 0;
+  final TextEditingController _transactionName =
+      TextEditingController(text: "");
+  final TextEditingController _transactionAmount =
+      TextEditingController(text: "");
   final TextEditingController _commentSection = TextEditingController(text: "");
   String _transactionType = "Income";
   String _transactionCategory = categories[0]['name'];
-
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void dispose() {
@@ -39,18 +43,38 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
     CollectionReference transactions =
         FirebaseFirestore.instance.collection('transactions');
 
-    Future<void> addTransaction() {
+    CollectionReference uniqueTransactionId =
+    FirebaseFirestore.instance.collection('transactionNumber');
+
+    Future<void> addTransaction() async {
       // Call the user's CollectionReference to add a new user
+
+      DocumentSnapshot variable = await FirebaseFirestore.instance.collection('transactionNumber').doc('7LkKmQeyZpT9mzAKRkrl').get();
+
+      int uniqueNumber = variable.get('UniqueTransactionNumber');
       return transactions
           .add({
+            'UniqueId': uniqueNumber,
             'Amount': double.parse(_transactionAmount.text),
             'Category': _transactionCategory,
             'Name': _transactionName.text,
             'Type': _transactionType,
             'User': 'Miki',
+            'Date': _selectedDate,
           })
           .then((value) => print("Transaction Added"))
           .catchError((error) => print("Failed to add transaction: $error"));
+
+
+    }
+
+    Future<void> updateUniqueTransactionNumber() async{
+      DocumentSnapshot variable = await FirebaseFirestore.instance.collection('transactionNumber').doc('7LkKmQeyZpT9mzAKRkrl').get();
+
+
+      await uniqueTransactionId
+          .doc(variable.id)
+          .update({"UniqueTransactionNumber": 1222});
     }
 
     var size = MediaQuery.of(context).size;
@@ -206,30 +230,82 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
                         border: InputBorder.none),
                   ),
                 ),
-                const Text(
-                  "Type",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13,
-                      color: Color(0xff67727d)),
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Type",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                              color: Color(0xff67727d)),
+                        ),
+                        Container(
+                            padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                            child: DropdownButton<String>(
+                              value: _transactionType,
+                              items: ['Income', 'Expense'].map((String val) {
+                                return DropdownMenuItem<String>(
+                                  value: val,
+                                  child: Text(val),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  _transactionType = val!;
+                                });
+                              },
+                            )),
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 50,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Date",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                              color: Color(0xff67727d)),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  Text(
+                                    "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}",
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      color: black,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.calendar_today,
+                                      color: primary,
+                                    ),
+                                    onPressed: () {
+                                      _selectDate(context);
+                                      updateUniqueTransactionNumber();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                Container(
-                    padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                    child: DropdownButton<String>(
-                      value: _transactionType,
-                      items: ['Income', 'Expense'].map((String val) {
-                        return DropdownMenuItem<String>(
-                          value: val,
-                          child: Text(val),
-                        );
-                      }).toList(),
-                      onChanged: (val){
-                        setState(() {
-                          _transactionType = val!;
-                        });
-                      },
-                    )),
-
                 const SizedBox(
                   height: 10,
                 ),
@@ -316,7 +392,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                   width: size.width,
-                  height: size.height * 0.16,
+                  height: size.height * 0.10,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12), color: white),
                   child: TextField(
@@ -337,5 +413,20 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
         ],
       ),
     );
+  }
+
+  _selectDate(BuildContext context) async {
+
+    final DateTime? selected = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2010),
+      lastDate: DateTime(2025),
+    );
+    if (selected != null && selected != _selectedDate) {
+      setState(() {
+        _selectedDate = selected;
+      });
+    }
   }
 }

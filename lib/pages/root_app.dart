@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:get/get.dart';
 
+import 'create_transaction.dart';
 import 'daily_page.dart';
 
 class RootApp extends StatefulWidget {
@@ -27,6 +28,7 @@ class _RootAppState extends State<RootApp> {
   List<Widget> pages = [
     //list of pages
     DailyPage(),
+    CreateBudgetPage()
   ];
 
   @override
@@ -48,7 +50,7 @@ class _RootAppState extends State<RootApp> {
         floatingActionButton: FloatingActionButton(
             onPressed: () {
               //will open a certain page
-              selectedTab(4);
+              selectedTab(1);
             },
             child: const Icon(
               Icons.add,

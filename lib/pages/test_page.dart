@@ -6,14 +6,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 
-class DailyPage extends StatefulWidget {
-  const DailyPage({Key? key}) : super(key: key);
+class TestPage extends StatefulWidget {
+  const TestPage({Key? key}) : super(key: key);
 
   @override
-  _DailyPageState createState() => _DailyPageState();
+  _TestPageState createState() => _TestPageState();
 }
 
-class _DailyPageState extends State<DailyPage> {
+class _TestPageState extends State<TestPage> {
 
   final db = FirebaseFirestore.instance;
 
@@ -126,87 +126,89 @@ class _DailyPageState extends State<DailyPage> {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Column(
-                children: List.generate(daily.length, (index) {
-              return Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children:
+
+                List.generate(daily.length, (index) {
+                  return Column(
                     children: [
-                      SizedBox(
-                        width: (size.width - 40) * 0.7,
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: grey.withOpacity(0.1),
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  daily[index]['icon'],
-                                  width: 30,
-                                  height: 30,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: (size.width - 40) * 0.7,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: grey.withOpacity(0.1),
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      daily[index]['icon'],
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 15),
+                                SizedBox(
+                                  width: (size.width - 90) * 0.5,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        daily[index]['name'],
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            color: black,
+                                            fontWeight: FontWeight.w500),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        daily[index]['date'],
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: black.withOpacity(0.5),
+                                            fontWeight: FontWeight.w400),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
-                            const SizedBox(width: 15),
-                            SizedBox(
-                              width: (size.width - 90) * 0.5,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    daily[index]['name'],
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        color: black,
-                                        fontWeight: FontWeight.w500),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    daily[index]['date'],
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: black.withOpacity(0.5),
-                                        fontWeight: FontWeight.w400),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                            width: (size.width - 40) * 0.3,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  daily[index]['price'],
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                      color: Colors.green),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
-                      SizedBox(
-                        width: (size.width - 40) * 0.3,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              daily[index]['price'],
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                  color: Colors.green),
-                            ),
-                          ],
+                      const Padding(
+                        padding: EdgeInsets.only(left: 65, top: 8),
+                        child: Divider(
+                          thickness: 0.8,
                         ),
                       )
                     ],
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 65, top: 8),
-                    child: Divider(
-                      thickness: 0.8,
-                    ),
-                  )
-                ],
-              );
-            })),
+                  );
+                })),
           ),
           const SizedBox(
             height: 15,

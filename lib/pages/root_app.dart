@@ -1,3 +1,4 @@
+import 'package:budget_buddy/pages/test_page.dart';
 import 'package:budget_buddy/theme/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,6 +29,7 @@ class _RootAppState extends State<RootApp> {
   List<Widget> pages = [
     //list of pages
     DailyPage(),
+    TestPage(),
     CreateBudgetPage(),
   ];
 
@@ -50,7 +52,7 @@ class _RootAppState extends State<RootApp> {
         floatingActionButton: FloatingActionButton(
             onPressed: () {
               //will open a certain page
-              selectedTab(1);
+              selectedTab(2);
             },
             child: const Icon(
               Icons.add,
@@ -65,24 +67,6 @@ class _RootAppState extends State<RootApp> {
 
   Widget getBody() {
     return
-        // Center(
-        //   child: StreamBuilder<QuerySnapshot>(
-        //     stream: FirebaseFirestore.instance.collection('categories').snapshots(),
-        //     builder: (context, snapshot) {
-        //       if (snapshot.hasData) {
-        //         return ListView.builder(
-        //             itemCount: snapshot.data!.docs.length,
-        //             itemBuilder: (context, index) {
-        //               DocumentSnapshot doc = snapshot.data!.docs[index];
-        //               String value = doc['Name'];
-        //               return Text(value.tr);
-        //             });
-        //       } else {
-        //         return const Text("No data");
-        //       }
-        //     },
-        //   ),
-        // );
         IndexedStack(
       index: pageIndex,
       children: pages,

@@ -1,3 +1,4 @@
+import 'package:budget_buddy/pages/login_page.dart';
 import 'package:budget_buddy/translations/locale_string.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +27,7 @@ void main() async {
     locale: Locale('nl',''),
 
 
-    home: RootApp(),
+    home: LoginPage(),
   ));
 }
 

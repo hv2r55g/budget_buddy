@@ -33,14 +33,6 @@ class RootApp extends StatefulWidget {
 class _RootAppState extends State<RootApp> {
   late User _user;
   int pageIndex = 0;
-  List<Widget> pages = [
-    //list of pages
-    DailyPage(),
-    TestPage(),
-    CreateBudgetPage(),
-
-    //ProfilePage(user: _user),
-  ];
 
   @override
   void initState() {
@@ -56,13 +48,26 @@ class _RootAppState extends State<RootApp> {
 
   @override
   Widget build(BuildContext context) {
+
+    List<Widget> pages = [
+      //list of pages
+      DailyPage(),
+      TestPage(),
+      TestPage(),
+      ProfilePage(user: _user),
+      CreateBudgetPage(),
+    ];
+
     return Scaffold(
-        body: getBody(),
+        body: IndexedStack(
+          index: pageIndex,
+          children: pages,
+        ),
         bottomNavigationBar: getFooter(),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
               //will open a certain page
-              selectedTab(2);
+              selectedTab(4);
             },
             child: const Icon(
               Icons.add,
@@ -73,14 +78,6 @@ class _RootAppState extends State<RootApp> {
             ),
         floatingActionButtonLocation:
             FloatingActionButtonLocation.centerDocked);
-  }
-
-  Widget getBody() {
-    return
-        IndexedStack(
-      index: pageIndex,
-      children: pages,
-    );
   }
 
   Widget getFooter() {
@@ -115,13 +112,13 @@ class _RootAppState extends State<RootApp> {
     });
   }
 
-
   Future<UserCredential> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(

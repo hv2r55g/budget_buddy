@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import '../utils/authentication.dart';
 
 class GoogleSignInButton extends StatefulWidget {
+  const GoogleSignInButton({Key? key}) : super(key: key);
+
   @override
   _GoogleSignInButtonState createState() => _GoogleSignInButtonState();
 }
@@ -44,7 +46,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => RootApp(
-                 // user: user,
+                 user: user,
                 ),
               ),
             );

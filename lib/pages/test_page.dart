@@ -16,8 +16,6 @@ class TestPage extends StatefulWidget {
 class _TestPageState extends State<TestPage> {
   final db = FirebaseFirestore.instance;
 
-  int activeDay = 3;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,11 +37,26 @@ class _TestPageState extends State<TestPage> {
 
     var docRef = db.collection("users").doc(uid);
 
-    db.collection('users').doc(uid)
-        .get()
-        .then((value) =>
-    print(value.get('Username')));
+    db.collection('users').doc(uid).get();
 
-    return Center(child: (Text(docRef.get().asStream().toString())));
+
+    //De goede manier om een value op te halen uit een document door er constant naar te luisteren
+    //Wil je het 1 maal ophalen gebruik je een FutureBuilder!!
+    return Center(
+      child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: db.collection('users').doc(uid).snapshots(),
+        builder: (_, snapshot) {
+          if (snapshot.hasError) return Text('Error = ${snapshot.error}');
+
+          if (snapshot.hasData) {
+            var output = snapshot.data!.data();
+            var value = output!['Username']; // <-- Your value
+            return Text('Username = $value');
+          }
+
+          return Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
   }
 }

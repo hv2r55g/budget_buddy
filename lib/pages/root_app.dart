@@ -1,3 +1,4 @@
+import 'package:budget_buddy/pages/profile_page.dart';
 import 'package:budget_buddy/pages/test_page.dart';
 import 'package:budget_buddy/theme/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,11 @@ import 'create_transaction.dart';
 import 'daily_page.dart';
 
 class RootApp extends StatefulWidget {
+  RootApp({Key? key, required User user})
+      : _user = user,
+        super(key: key);
+
+  final User _user;
   final List locale = [
     {'name': 'ENGLISH', 'locale': Locale('en', '')},
     {'name': 'NEDERLANDS', 'locale': Locale('nl', '')},
@@ -25,17 +31,21 @@ class RootApp extends StatefulWidget {
 }
 
 class _RootAppState extends State<RootApp> {
+  late User _user;
   int pageIndex = 0;
   List<Widget> pages = [
     //list of pages
     DailyPage(),
     TestPage(),
     CreateBudgetPage(),
+
+    //ProfilePage(user: _user),
   ];
 
   @override
   void initState() {
-    // TODO: implement initState
+    _user = widget._user;
+
     super.initState();
   }
 

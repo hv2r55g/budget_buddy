@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                 future: Authentication.initializeFirebase(context: context),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Text('Error initializing Firebase');
+                    return const Text('Error initializing Firebase');
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     return GoogleSignInButton();
                   }

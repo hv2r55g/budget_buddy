@@ -27,7 +27,7 @@ class Authentication {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => RootApp(
-            //user: user,
+            user: user,
           ),
         ),
       );

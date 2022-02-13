@@ -33,8 +33,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           setState(() {
             _isSigningIn = true;
           });
-          UserCredential user =
-          await Authentication.signInWithGoogle();
+          User? user =
+          await Authentication.signInWithGoogle(context: context);
 
           setState(() {
             _isSigningIn = false;
@@ -44,7 +44,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => RootApp(
-                  //user: user,
+                 // user: user,
                 ),
               ),
             );

@@ -5,13 +5,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CreateBudgetPage extends StatefulWidget {
+  const CreateBudgetPage({Key? key}) : super(key: key);
+
   @override
   _CreateBudgetPageState createState() => _CreateBudgetPageState();
 }
 
 class _CreateBudgetPageState extends State<CreateBudgetPage> {
   int activeCategory = 0;
-  int _transactionNumber = 0;
   final TextEditingController _transactionName =
       TextEditingController(text: "");
   final TextEditingController _transactionAmount =
@@ -40,41 +41,63 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
   Widget getBody() {
     List<String> types = <String>['Income', 'Expense'];
 
-    CollectionReference transactions =
-        FirebaseFirestore.instance.collection('transactions');
+    String budgetDoc = 'c6NUG8oCKg6wx8tFRc6w';
 
-    CollectionReference uniqueTransactionId =
-    FirebaseFirestore.instance.collection('transactionNumber');
+    //var temp = FirebaseFirestore.instance.collection('budgets').where('OwnerId', isEqualTo: 'OMFWLLK99fViEq1jYTm54f4X1b73' );
+
+    // var temp = FirebaseFirestore.instance
+    //     .collection('budgets')
+    //     .where('OwnerId', isEqualTo: 'OMFWLLK99fViEq1jYTm54f4X1b73')
+    //     .get()    .then((value) {
+    //   value.docs.forEach((result) {
+    //     print(result.data());
+    //   });
+    //
+    //
+    // print(temp);
+
+    CollectionReference transactions = FirebaseFirestore.instance
+        .collection('budgets')
+        .doc(budgetDoc)
+        .collection('transactions');
 
     Future<void> addTransaction() async {
       // Call the user's CollectionReference to add a new user
 
-      DocumentSnapshot variable = await FirebaseFirestore.instance.collection('transactionNumber').doc('7LkKmQeyZpT9mzAKRkrl').get();
+      DocumentSnapshot variable = await FirebaseFirestore.instance
+          .collection('budgets')
+          .doc(budgetDoc)
+          .get();
 
-      int uniqueNumber = variable.get('UniqueTransactionNumber');
+      int transactionNumber = variable.get('transactionNumber');
       return transactions
           .add({
-            'UniqueId': uniqueNumber,
+            'TransactionNumber': transactionNumber,
             'Amount': double.parse(_transactionAmount.text),
             'Category': _transactionCategory,
             'Name': _transactionName.text,
             'Type': _transactionType,
             'User': 'Miki',
             'Date': _selectedDate,
+            'Comment': _commentSection.text,
           })
           .then((value) => print("Transaction Added"))
-          .catchError((error) => print("Failed to add transaction: $error"));
-
-
+          .catchError((error) => print("Failed to add transaction: $error"))
+          .then((value) => _resetParameters());
     }
 
-    Future<void> updateUniqueTransactionNumber() async{
-      DocumentSnapshot variable = await FirebaseFirestore.instance.collection('transactionNumber').doc('7LkKmQeyZpT9mzAKRkrl').get();
+    Future<void> updateUniqueTransactionNumber() async {
+      DocumentSnapshot variable = await FirebaseFirestore.instance
+          .collection('budgets')
+          .doc(budgetDoc)
+          .get();
 
+      int transactionNumber = variable.get('transactionNumber');
 
-      await uniqueTransactionId
+      await FirebaseFirestore.instance
+          .collection('budgets')
           .doc(variable.id)
-          .update({"UniqueTransactionNumber": 1222});
+          .update({"transactionNumber": transactionNumber + 1});
     }
 
     var size = MediaQuery.of(context).size;
@@ -290,11 +313,10 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
                                   IconButton(
                                     icon: const Icon(
                                       Icons.calendar_today,
-                                      color: primary,
+                                      color: Colors.pink,
                                     ),
                                     onPressed: () {
                                       _selectDate(context);
-                                      updateUniqueTransactionNumber();
                                     },
                                   ),
                                 ],
@@ -371,6 +393,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
                         ),
                         onPressed: () {
                           addTransaction();
+                          updateUniqueTransactionNumber();
                         },
                       ),
                     ),
@@ -416,7 +439,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
   }
 
   _selectDate(BuildContext context) async {
-
     final DateTime? selected = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -428,5 +450,12 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
         _selectedDate = selected;
       });
     }
+  }
+
+  _resetParameters() {
+    _transactionAmount.clear();
+    _transactionAmount.clear();
+    _commentSection.clear();
+    activeCategory = 0;
   }
 }

@@ -1,20 +1,13 @@
-import 'package:budget_buddy/pages/root_app.dart';
-import 'package:budget_buddy/pages/test_page.dart';
 import 'package:budget_buddy/theme/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../utils/authentication.dart';
 import '../widgets/google_login_button.dart';
-import 'create_transaction.dart';
-import 'daily_page.dart';
+
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -47,16 +40,16 @@ class _LoginPageState extends State<LoginPage> {
                         height: 160,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     const Text(
-                      'FlutterFire',
+                      'BudgetBuddy',
                       style: TextStyle(
                         color: Colors.amber,
                         fontSize: 40,
                       ),
                     ),
                     const Text(
-                      'Authentication',
+                      "By MikICT",
                       style: TextStyle(
                         color: Colors.deepOrange,
                         fontSize: 40,

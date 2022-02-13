@@ -1,4 +1,3 @@
-import 'package:budget_buddy/pages/root_app.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
@@ -22,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Route _routeToSignInScreen() {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => LoginPage(),
+      pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(-1.0, 0.0);
         var end = Offset.zero;
@@ -83,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Icon(
                       Icons.person,
                       size: 60,
-                      color: firebaseGrey,
+                      color: firebaseAmber,
                     ),
                   ),
                 ),
@@ -96,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontSize: 26,
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 _user.displayName!,
                 style: const TextStyle(
@@ -121,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontSize: 14,
                     letterSpacing: 0.2),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               _isSigningOut
                   ? const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -129,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   : ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                    Colors.redAccent,
+                    Colors.pink,
                   ),
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(

@@ -5,15 +5,16 @@ enum TransactionType { Income, Expense}
 class Transaction {
 
 
-  Future<void> _addTransaction(CollectionReference transactions, CollectionReference transactionNumber, String amount, String category, String name, String type, String user) async {
+  Future<void> _addTransaction(String budgetDoc, String amount, String category, String name, String type, String user) async {
     // Call the user's CollectionReference to add a new user
-    DocumentSnapshot variable = await FirebaseFirestore.instance.collection('transactionNumber').doc('7LkKmQeyZpT9mzAKRkrl').get();
+    DocumentSnapshot variable = await FirebaseFirestore.instance.collection('budgets').doc(budgetDoc).get();
+    int transactionNumber = variable.get('transactionNumber');
 
-    int uniqueNumber = variable.get('UniqueTransactionNumber');
-    
+    CollectionReference transactions = FirebaseFirestore.instance.collection('budgets').doc(budgetDoc).collection('transactions');
+
     return transactions
         .add({
-      'UniqueId': uniqueNumber,
+      'TransactionNumber': transactionNumber,
       'Amount': double.parse(amount),
       'Category': category,
       'Name': name,

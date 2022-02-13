@@ -17,8 +17,8 @@ class RootApp extends StatefulWidget {
 
   final User _user;
   final List locale = [
-    {'name': 'ENGLISH', 'locale': Locale('en', '')},
-    {'name': 'NEDERLANDS', 'locale': Locale('nl', '')},
+    {'name': 'ENGLISH', 'locale': const Locale('en', '')},
+    {'name': 'NEDERLANDS', 'locale': const Locale('nl', '')},
   ];
 
   updateLanguage(Locale locale) {

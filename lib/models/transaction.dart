@@ -8,7 +8,7 @@ class Transaction {
   Future<void> _addTransaction(String budgetDoc, String amount, String category, String name, String type, String user) async {
     // Call the user's CollectionReference to add a new user
     DocumentSnapshot variable = await FirebaseFirestore.instance.collection('budgets').doc(budgetDoc).get();
-    int transactionNumber = variable.get('transactionNumber');
+    int transactionNumber = variable.get('TransactionNumber');
 
     CollectionReference transactions = FirebaseFirestore.instance.collection('budgets').doc(budgetDoc).collection('transactions');
 

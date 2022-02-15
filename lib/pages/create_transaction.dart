@@ -1,17 +1,24 @@
 import 'package:budget_buddy/json/create_budget_json.dart';
+import 'package:budget_buddy/pages/root_app.dart';
 import 'package:budget_buddy/theme/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CreateBudgetPage extends StatefulWidget {
-  const CreateBudgetPage({Key? key}) : super(key: key);
+  const CreateBudgetPage({Key? key, required User user})
+      : _user = user,
+        super(key: key);
+
+  final User _user;
 
   @override
   _CreateBudgetPageState createState() => _CreateBudgetPageState();
 }
 
 class _CreateBudgetPageState extends State<CreateBudgetPage> {
+  late User _user;
   int activeCategory = 0;
   final TextEditingController _transactionName =
       TextEditingController(text: "");
@@ -31,6 +38,13 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
   }
 
   @override
+  void initState() {
+    _user = widget._user;
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: grey.withOpacity(0.05),
@@ -43,19 +57,6 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
 
     String budgetDoc = 'c6NUG8oCKg6wx8tFRc6w';
 
-    //var temp = FirebaseFirestore.instance.collection('budgets').where('OwnerId', isEqualTo: 'OMFWLLK99fViEq1jYTm54f4X1b73' );
-
-    // var temp = FirebaseFirestore.instance
-    //     .collection('budgets')
-    //     .where('OwnerId', isEqualTo: 'OMFWLLK99fViEq1jYTm54f4X1b73')
-    //     .get()    .then((value) {
-    //   value.docs.forEach((result) {
-    //     print(result.data());
-    //   });
-    //
-    //
-    // print(temp);
-
     CollectionReference transactions = FirebaseFirestore.instance
         .collection('budgets')
         .doc(budgetDoc)
@@ -64,12 +65,19 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
     Future<void> addTransaction() async {
       // Call the user's CollectionReference to add a new user
 
-      DocumentSnapshot variable = await FirebaseFirestore.instance
+      DocumentSnapshot budgetTransactions = await FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
           .get();
 
-      int transactionNumber = variable.get('transactionNumber');
+      DocumentSnapshot userCollectionSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.uid)
+          .get();
+
+      String userName = userCollectionSnapshot.get('Username');
+
+      int transactionNumber = budgetTransactions.get('TransactionNumber');
       return transactions
           .add({
             'TransactionNumber': transactionNumber,
@@ -77,7 +85,8 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
             'Category': _transactionCategory,
             'Name': _transactionName.text,
             'Type': _transactionType,
-            'User': 'Miki',
+            'UserId': _user.uid,
+            'UserName': userName,
             'Date': _selectedDate,
             'Comment': _commentSection.text,
           })
@@ -92,12 +101,12 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
           .doc(budgetDoc)
           .get();
 
-      int transactionNumber = variable.get('transactionNumber');
+      int transactionNumber = variable.get('TransactionNumber');
 
       await FirebaseFirestore.instance
           .collection('budgets')
           .doc(variable.id)
-          .update({"transactionNumber": transactionNumber + 1});
+          .update({"TransactionNumber": transactionNumber + 1});
     }
 
     var size = MediaQuery.of(context).size;

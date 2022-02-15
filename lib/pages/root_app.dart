@@ -51,11 +51,11 @@ class _RootAppState extends State<RootApp> {
 
     List<Widget> pages = [
       //list of pages
-      DailyPage(),
-      TestPage(),
-      TestPage(),
+      const DailyPage(),
+      const TestPage(),
+      const TestPage(),
       ProfilePage(user: _user),
-      CreateBudgetPage(),
+      CreateBudgetPage(user: _user),
     ];
 
     return Scaffold(

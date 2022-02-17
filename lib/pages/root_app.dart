@@ -52,8 +52,8 @@ class _RootAppState extends State<RootApp> {
     List<Widget> pages = [
       //list of pages
       const DailyPage(),
-      const TestPage(),
-      const TestPage(),
+      TestPage(),
+      TestPage(),
       ProfilePage(user: _user),
       CreateBudgetPage(user: _user),
     ];

@@ -30,10 +30,6 @@ class _DailyPageState extends State<DailyPage> {
   Widget getBody() {
     var size = MediaQuery.of(context).size;
 
-
-    CollectionReference transactions =
-    FirebaseFirestore.instance.collection('transactions');
-
     return SingleChildScrollView(
       child: Column(
         children: [

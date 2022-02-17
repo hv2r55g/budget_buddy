@@ -1,6 +1,7 @@
 import 'package:budget_buddy/json/create_budget_json.dart';
 import 'package:budget_buddy/pages/root_app.dart';
 import 'package:budget_buddy/theme/colors.dart';
+import 'package:budget_buddy/utils/cache_query.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -68,12 +69,12 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
       DocumentSnapshot budgetTransactions = await FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
-          .get();
+          .getSavy();
 
       DocumentSnapshot userCollectionSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(_user.uid)
-          .get();
+          .getSavy();
 
       String userName = userCollectionSnapshot.get('Username');
 
@@ -99,7 +100,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
       DocumentSnapshot variable = await FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
-          .get();
+          .getSavy();
 
       int transactionNumber = variable.get('TransactionNumber');
 
@@ -463,6 +464,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
 
   _resetParameters() {
     _transactionAmount.clear();
+    _transactionName.clear();
     _transactionAmount.clear();
     _commentSection.clear();
     activeCategory = 0;

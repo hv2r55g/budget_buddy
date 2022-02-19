@@ -78,6 +78,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  customtogglebuttons:
+    dependency: "direct main"
+    description:
+      name: customtogglebuttons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -223,7 +230,7 @@ packages:
       name: google_sign_in_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.2"
   google_sign_in_web:
     dependency: transitive
     description:

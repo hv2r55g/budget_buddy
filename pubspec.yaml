@@ -36,6 +36,7 @@ dependencies:
   google_sign_in: ^5.2.3
   cloud_firestore: ^3.1.7
   font_awesome_flutter: ^9.2.0
+  customtogglebuttons: ^0.0.5
   get: ^4.6.1
   flutter_localizations:
     sdk: flutter

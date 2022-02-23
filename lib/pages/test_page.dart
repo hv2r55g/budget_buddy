@@ -20,8 +20,14 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   @override
-  bool get wantKeepAlive => true;
-  late String date;
+  late String date =
+      DateTime.now().day.toString() + " " + _month(DateTime.now().month);
+  late int year;
+  late int yearBeginWeek =
+      DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1)).year;
+
+  late int yearEndWeek =
+      DateTime.now().add(Duration(days: 7 - DateTime.now().weekday)).year;
 
   final db = FirebaseFirestore.instance;
 
@@ -35,6 +41,7 @@ class _TestPageState extends State<TestPage> {
 
   @override
   void initState() {
+    _setDate();
     super.initState();
   }
 
@@ -47,36 +54,44 @@ class _TestPageState extends State<TestPage> {
   }
 
   Future<void> getData() async {
-    var transactions = FirebaseFirestore.instance
+    Query<Map<String, dynamic>> transactions = FirebaseFirestore.instance
         .collection('budgets')
         .doc('c6NUG8oCKg6wx8tFRc6w')
         .collection('transactions');
+
+    if (selectedButton == 1) {
+      setState(() {
+        var splitted = date.split(' ');
+        var startDate = DateTime(year, _textToNumberMonth(splitted[1]),
+            int.parse(splitted[0]), 0, 0, 0, 0);
+        var endDate = DateTime(year, _textToNumberMonth(splitted[1]),
+            int.parse(splitted[0]), 23, 59, 59);
+
+        transactions = FirebaseFirestore.instance
+            .collection('budgets')
+            .doc('c6NUG8oCKg6wx8tFRc6w')
+            .collection('transactions')
+            .where('Date', isGreaterThanOrEqualTo: startDate)
+            .where('Date', isLessThanOrEqualTo: endDate);
+      });
+    }
+
     // Get docs from collection reference
     querySnapshot = await transactions.getSavy();
-    print(querySnapshot.metadata.isFromCache
-        ? "NOT FROM NETWORK"
-        : "FROM NETWORK");
-
-    querySnapshot.docs
-        .map((doc) => ListTile(
-            title: Text(doc["Name"]), subtitle: Text(doc["Amount"].toString())))
-        .toList();
 
     // Get data from docs and convert map to List
     userTransactions = querySnapshot.docs.map((doc) => doc.data()).toList();
   }
 
   getBody() {
-    _setDate();
-
-    int activeButton = 0;
+    // _setDate();
 
     List<Widget> dateButtons = [
       //list of buttons
-      DailyButton(),
-      WeeklyButton(),
-      MonthlyButton(),
-      PeriodButton(),
+      const DailyButton(),
+      const WeeklyButton(),
+      const MonthlyButton(),
+      const PeriodButton(),
     ];
 
     getData();
@@ -139,10 +154,9 @@ class _TestPageState extends State<TestPage> {
                 Padding(
                   padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                   child: Text(
-                    "Montly",
+                    "Monthly",
                   ),
                 ),
-
               ],
               onPressed: (int index) {
                 setState(() {
@@ -156,20 +170,50 @@ class _TestPageState extends State<TestPage> {
                       isSelected[buttonIndex] = false;
                     }
                   }
+
+                  year = DateTime.now().year;
+
+                  if (index == 1) {
+                    date = DateTime.now().day.toString() +
+                        " " +
+                        _month(DateTime.now().month);
+                  } else if (index == 2) {
+                    var startDate = DateTime.now()
+                        .subtract(Duration(days: DateTime.now().weekday - 1));
+                    var endDate = DateTime.now()
+                        .add(Duration(days: 7 - DateTime.now().weekday));
+                    date = startDate.day.toString() +
+                        " " +
+                        _month(startDate.month) +
+                        " - " +
+                        endDate.day.toString() +
+                        " " +
+                        _month(endDate.month);
+                  } else if (index == 3) {
+                    date = _month(DateTime.now().month);
+                  }
                 });
               },
               isSelected: isSelected,
             ),
           ]),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const IconButton(onPressed: null, icon: Icon(Icons.arrow_back)),
-              Text(date),
-              const IconButton(
-                  onPressed: null, icon: Icon(Icons.arrow_forward)),
-            ],
-          ),
+          if (!isSelected[0])
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                    onPressed: () => setState(() {
+                          _changeDateDown();
+                        }),
+                    icon: const Icon(Icons.arrow_back)),
+                Text(date),
+                IconButton(
+                    onPressed: () => setState(() {
+                          _changeDateUp();
+                        }),
+                    icon: const Icon(Icons.arrow_forward)),
+              ],
+            ),
           StreamBuilder(
             stream: db
                 .collection('budgets')
@@ -193,8 +237,7 @@ class _TestPageState extends State<TestPage> {
                                   " " +
                                   _month(
                                       DateTime.parse(doc["Date"].toDate().toString())
-                                          .month
-                                          .toString()) +
+                                          .month) +
                                   " " +
                                   DateTime.parse(doc["Date"].toDate().toString())
                                       .hour
@@ -235,30 +278,30 @@ class _TestPageState extends State<TestPage> {
     }
   }
 
-  String _month(String monthNumber) {
-    if (monthNumber == "1") {
+  String _month(int monthNumber) {
+    if (monthNumber == 1) {
       return "Jan";
-    } else if (monthNumber == "2") {
+    } else if (monthNumber == 2) {
       return "Feb";
-    } else if (monthNumber == "3") {
+    } else if (monthNumber == 3) {
       return "Mar";
-    } else if (monthNumber == "4") {
+    } else if (monthNumber == 4) {
       return "Apr";
-    } else if (monthNumber == "5") {
+    } else if (monthNumber == 5) {
       return "May";
-    } else if (monthNumber == "6") {
+    } else if (monthNumber == 6) {
       return "Jun";
-    } else if (monthNumber == "7") {
+    } else if (monthNumber == 7) {
       return "Jul";
-    } else if (monthNumber == "8") {
+    } else if (monthNumber == 8) {
       return "Aug";
-    } else if (monthNumber == "9") {
+    } else if (monthNumber == 9) {
       return "Sep";
-    } else if (monthNumber == "10") {
+    } else if (monthNumber == 10) {
       return "Oct";
-    } else if (monthNumber == "11") {
+    } else if (monthNumber == 11) {
       return "Nov";
-    } else if (monthNumber == "12") {
+    } else if (monthNumber == 12) {
       return "Dec";
     } else {
       return "Err";
@@ -297,16 +340,142 @@ class _TestPageState extends State<TestPage> {
   }
 
   void _setDate() {
+    year = DateTime.now().year;
+
     if (selectedButton == 1) {
-      date = DateTime.now().day.toString() +
+      date = DateTime.now().day.toString() + " " + _month(DateTime.now().month);
+    } else if (selectedButton == 2) {
+      var startDate =
+          DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+      var endDate =
+          DateTime.now().add(Duration(days: 7 - DateTime.now().weekday));
+      date = startDate.day.toString() +
           " " +
-          _month(DateTime.now().month.toString());
-    } else if (selectedButton == 2){
-      var startDate = DateTime.now().subtract(Duration(days:DateTime.now().weekday - 1));
-      var endDate = DateTime.now().add(Duration(days: 7-DateTime.now().weekday));
-      date = startDate.day.toString() + " " + _month(startDate.month.toString()) +" - " + endDate.day.toString() + " " + _month(endDate.month.toString());
-    } else if( selectedButton == 3){
-      date = _month(DateTime.now().month.toString());
+          _month(startDate.month) +
+          " - " +
+          endDate.day.toString() +
+          " " +
+          _month(endDate.month);
+    } else if (selectedButton == 3) {
+      date = _month(DateTime.now().month);
+    }
+  }
+
+  _changeDateDown() {
+    if (selectedButton == 1) {
+      var splitted = date.split(' ');
+      var day = splitted[0];
+      var month = splitted[1];
+
+      var tempDate = DateTime(year, _textToNumberMonth(month), int.parse(day));
+
+      var resultDate = tempDate.subtract(const Duration(days: 1));
+
+      date = resultDate.day.toString() + " " + _month(resultDate.month);
+    } else if (selectedButton == 2) {
+      var splitted = date.split(' ');
+      var beginDay = splitted[0];
+      var beginMonth = splitted[1];
+      var endDay = splitted[3];
+      var endMonth = splitted[4];
+
+      var tempBeginDay = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
+              int.parse(beginDay))
+          .subtract(const Duration(days: 7));
+
+      var tempEndDay =
+          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
+              .subtract(const Duration(days: 7));
+
+      date = tempBeginDay.day.toString() +
+          ' ' +
+          _month(tempBeginDay.month) +
+          ' - ' +
+          tempEndDay.day.toString() +
+          ' ' +
+          _month(tempEndDay.month);
+    } else if (selectedButton == 3) {
+      if (date == "Jan") {
+        date = "Dec";
+      } else {
+        date = _month(((_textToNumberMonth(date)) - 1) % 12);
+      }
+    }
+
+    getData();
+  }
+
+  void _changeDateUp() {
+    if (selectedButton == 1) {
+      var splitted = date.split(' ');
+      var day = splitted[0];
+      var month = splitted[1];
+
+      var tempDate = DateTime(year, _textToNumberMonth(month), int.parse(day));
+
+      var resultDate = tempDate.add(const Duration(days: 1));
+
+      date = resultDate.day.toString() + " " + _month(resultDate.month);
+    } else if (selectedButton == 2) {
+      var splitted = date.split(' ');
+      var beginDay = splitted[0];
+      var beginMonth = splitted[1];
+      var endDay = splitted[3];
+      var endMonth = splitted[4];
+
+      var tempBeginDay = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
+              int.parse(beginDay))
+          .add(const Duration(days: 7));
+
+      var tempEndDay =
+          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
+              .add(const Duration(days: 7));
+
+      date = tempBeginDay.day.toString() +
+          ' ' +
+          _month(tempBeginDay.month) +
+          ' - ' +
+          tempEndDay.day.toString() +
+          ' ' +
+          _month(tempEndDay.month);
+    } else if (selectedButton == 3) {
+      if (date == "Dec") {
+        date = "Jan";
+      } else {
+        date = _month(((_textToNumberMonth(date)) + 1) % 12);
+      }
+    }
+
+    getData();
+  }
+
+  int _textToNumberMonth(String month) {
+    if (month == "Jan") {
+      return 1;
+    } else if (month == "Feb") {
+      return 2;
+    } else if (month == "Mar") {
+      return 3;
+    } else if (month == "Apr") {
+      return 4;
+    } else if (month == "May") {
+      return 5;
+    } else if (month == "Jun") {
+      return 6;
+    } else if (month == "Jul") {
+      return 7;
+    } else if (month == "Aug") {
+      return 8;
+    } else if (month == "Sep") {
+      return 9;
+    } else if (month == "Oct") {
+      return 10;
+    } else if (month == "Nov") {
+      return 11;
+    } else if (month == "Dec") {
+      return 12;
+    } else {
+      return 0;
     }
   }
 }

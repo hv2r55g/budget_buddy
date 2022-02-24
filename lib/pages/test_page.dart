@@ -81,6 +81,7 @@ class _TestPageState extends State<TestPage> {
 
     // Get data from docs and convert map to List
     userTransactions = querySnapshot.docs.map((doc) => doc.data()).toList();
+    print(userTransactions);
   }
 
   getBody() {

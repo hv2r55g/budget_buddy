@@ -54,7 +54,7 @@ class _RootAppState extends State<RootApp> {
       //list of pages
       const DailyPage(),
       TestPage(),
-      TestPage2(),
+      TestPage(),
       ProfilePage(user: _user),
       CreateBudgetPage(user: _user),
     ];

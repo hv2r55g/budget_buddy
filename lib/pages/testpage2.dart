@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:budget_buddy/theme/colors.dart';
 import 'package:budget_buddy/utils/cache_query.dart';
+import 'package:budget_buddy/models/transactionModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,8 @@ class TestPage2 extends StatefulWidget {
 }
 
 class _TestPage2State extends State<TestPage2> {
-  @override
+  var transactionHelper = TransactionModel();
+  late Stream<QuerySnapshot<Map<String, dynamic>>> dataList = transactionHelper.getTransactionsByPeriod(date,year,1, 'c6NUG8oCKg6wx8tFRc6w');
   late String date =
       DateTime.now().day.toString() + " " + _month(DateTime.now().month);
   late int year;
@@ -41,6 +43,8 @@ class _TestPage2State extends State<TestPage2> {
 
   @override
   void initState() {
+  dataList = transactionHelper.getTransactionsByPeriod(date,year,1, 'c6NUG8oCKg6wx8tFRc6w');
+
     _setDate();
     super.initState();
   }
@@ -115,8 +119,8 @@ class _TestPage2State extends State<TestPage2> {
     getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
       return snapshot.data?.docs
           .map((doc) => ListTile(
-          title: Text(doc["name"]),
-          subtitle: Text(doc["amount"].toString())))
+              title: Text(doc["name"]),
+              subtitle: Text(doc["amount"].toString())))
           .toList();
     }
 
@@ -162,8 +166,8 @@ class _TestPage2State extends State<TestPage2> {
               onPressed: (int index) {
                 setState(() {
                   for (int buttonIndex = 0;
-                  buttonIndex < isSelected.length;
-                  buttonIndex++) {
+                      buttonIndex < isSelected.length;
+                      buttonIndex++) {
                     if (buttonIndex == index) {
                       selectedButton = index;
                       isSelected[buttonIndex] = true;
@@ -204,52 +208,53 @@ class _TestPage2State extends State<TestPage2> {
               children: [
                 IconButton(
                     onPressed: () => setState(() {
-                      _changeDateDown();
-                    }),
+                          _changeDateDown();
+                        }),
                     icon: const Icon(Icons.arrow_back)),
                 Text(date),
                 IconButton(
                     onPressed: () => setState(() {
-                      _changeDateUp();
-                    }),
+                          _changeDateUp();
+                        }),
                     icon: const Icon(Icons.arrow_forward)),
               ],
             ),
-          StreamBuilder(
-            stream: db
-                .collection('budgets')
-                .doc('c6NUG8oCKg6wx8tFRc6w')
-                .collection('transactions')
-                .snapshots(),
-            builder: (context, snapshot) {
+          StreamBuilder<QuerySnapshot>(
+            stream: dataList,
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Column(
-                      children: querySnapshot.docs
-                          .map((doc) => ListTile(
-                          leading: Image.asset(
-                              _getIcon(doc["Category"].toString()),
-                              height: 40),
-                          title: Text(doc["Name"]),
-                          subtitle: Text(DateTime.parse(doc["Date"].toDate().toString())
-                              .day
-                              .toString() +
-                              " " +
-                              _month(
-                                  DateTime.parse(doc["Date"].toDate().toString())
-                                      .month) +
-                              " " +
-                              DateTime.parse(doc["Date"].toDate().toString())
-                                  .hour
-                                  .toString() +
-                              ":" +
-                              _minute(
-                                  DateTime.parse(doc["Date"].toDate().toString())
-                                      .minute
-                                      .toString())),
-                          trailing: _amount(doc["Type"].toString(), doc["Amount"].toString())))
-                          .toList()),
+                      children:
+                          snapshot.data!.docs.map((DocumentSnapshot document) {
+                    Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                    return ListTile(
+                        leading: Image.asset(
+                            _getIcon(data["Category"].toString()),
+                            height: 40),
+                        title: Text(data["Name"]),
+                        subtitle: Text(DateTime.parse(
+                                    data["Date"].toDate().toString())
+                                .day
+                                .toString() +
+                            " " +
+                            _month(
+                                DateTime.parse(data["Date"].toDate().toString())
+                                    .month) +
+                            " " +
+                            DateTime.parse(data["Date"].toDate().toString())
+                                .hour
+                                .toString() +
+                            ":" +
+                            _minute(
+                                DateTime.parse(data["Date"].toDate().toString())
+                                    .minute
+                                    .toString())),
+                        trailing: _amount(data["Type"].toString(),
+                            data["Amount"].toString()));
+                  }).toList()),
                 );
               } else {
                 return const Center(child: CircularProgressIndicator());
@@ -347,9 +352,9 @@ class _TestPage2State extends State<TestPage2> {
       date = DateTime.now().day.toString() + " " + _month(DateTime.now().month);
     } else if (selectedButton == 2) {
       var startDate =
-      DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+          DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
       var endDate =
-      DateTime.now().add(Duration(days: 7 - DateTime.now().weekday));
+          DateTime.now().add(Duration(days: 7 - DateTime.now().weekday));
       date = startDate.day.toString() +
           " " +
           _month(startDate.month) +
@@ -381,12 +386,12 @@ class _TestPage2State extends State<TestPage2> {
       var endMonth = splitted[4];
 
       var tempBeginDay = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
-          int.parse(beginDay))
+              int.parse(beginDay))
           .subtract(const Duration(days: 7));
 
       var tempEndDay =
-      DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
-          .subtract(const Duration(days: 7));
+          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
+              .subtract(const Duration(days: 7));
 
       date = tempBeginDay.day.toString() +
           ' ' +
@@ -425,12 +430,12 @@ class _TestPage2State extends State<TestPage2> {
       var endMonth = splitted[4];
 
       var tempBeginDay = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
-          int.parse(beginDay))
+              int.parse(beginDay))
           .add(const Duration(days: 7));
 
       var tempEndDay =
-      DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
-          .add(const Duration(days: 7));
+          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
+              .add(const Duration(days: 7));
 
       date = tempBeginDay.day.toString() +
           ' ' +

@@ -6,6 +6,7 @@ enum TransactionType { Income, Expense }
 
 class TransactionModel {
   var testPage = TestPage();
+
   Future<void> _addTransaction(String budgetDoc, String amount, String category,
       String name, String type, String user) async {
     // Call the user's CollectionReference to add a new user
@@ -43,21 +44,52 @@ class TransactionModel {
         .snapshots();
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> getTransactionsByPeriod(String date, int year, int periodType, String budgetDoc) {
-    if (periodType == 1) { //Type daily
+  Stream<QuerySnapshot<Map<String, dynamic>>> getTransactionsByPeriod(
+      String date,
+      int yearBeginWeek,
+      int yearEndWeek,
+      int year,
+      int periodType,
+      String budgetDoc) {
+    if (periodType == 1) {
+      //Type daily
       var splitted = date.split(' ');
-      var startDate = DateTime(year, _textToNumberMonth(splitted[1]),
-          int.parse(splitted[0]), 0, 0, 0, 0);
-      var endDate = DateTime(year, _textToNumberMonth(splitted[1]),
-          int.parse(splitted[0]), 23, 59, 59);
+      var startDate = DateTime(DateTime.now().year,
+          _textToNumberMonth(splitted[1]), int.parse(splitted[0]), 0, 0, 0, 0);
+      var endDate = DateTime(DateTime.now().year,
+          _textToNumberMonth(splitted[1]), int.parse(splitted[0]), 23, 59, 59);
 
       return FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
           .collection('transactions')
           .where('Date', isGreaterThanOrEqualTo: startDate)
-          .where('Date', isLessThanOrEqualTo: endDate).snapshots();
-    } else if (periodType == 2) { //Type weekly
+          .where('Date', isLessThanOrEqualTo: endDate)
+          .orderBy('Date', descending: true)
+          .snapshots();
+    } else if (periodType == 2) {
+      //Type weekly
+      var splitted = date.split(' ');
+      var beginDay = splitted[0];
+      var beginMonth = splitted[1];
+      var endDay = splitted[3];
+      var endMonth = splitted[4];
+
+      var startDate = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
+              int.parse(beginDay));
+
+      var endDate =
+          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay));
+      return FirebaseFirestore.instance
+          .collection('budgets')
+          .doc(budgetDoc)
+          .collection('transactions')
+          .where('Date', isGreaterThanOrEqualTo: startDate)
+          .where('Date', isLessThanOrEqualTo: endDate)
+          .orderBy('Date', descending: true)
+          .snapshots();
+    } else if (periodType == 3) {
+      //Type Monthly
       String startDate = '';
       String endDate = '';
       return FirebaseFirestore.instance
@@ -65,25 +97,18 @@ class TransactionModel {
           .doc(budgetDoc)
           .collection('transactions')
           .where('Date', isGreaterThanOrEqualTo: startDate)
-          .where('Date', isLessThanOrEqualTo: endDate).snapshots();
-    } else if (periodType == 3) { //Type Monthly
-      String startDate = '';
-      String endDate = '';
+          .where('Date', isLessThanOrEqualTo: endDate)
+          .orderBy('Date', descending: true)
+          .snapshots();
+    } else {
+      //Type All
       return FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
           .collection('transactions')
-          .where('Date', isGreaterThanOrEqualTo: startDate)
-          .where('Date', isLessThanOrEqualTo: endDate).snapshots();
-    } else { //Type All
-      return FirebaseFirestore.instance
-          .collection('budgets')
-          .doc(budgetDoc)
-          .collection('transactions')
+          .orderBy('Date', descending: true)
           .snapshots();
     }
-
-
   }
 
   int _textToNumberMonth(String month) {

@@ -7,11 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/buttons/daily_button.dart';
-import '../widgets/buttons/monthly_button.dart';
-import '../widgets/buttons/period_button.dart';
-import '../widgets/buttons/weekly_button.dart';
-
 class TestPage2 extends StatefulWidget {
   const TestPage2({Key? key}) : super(key: key);
 
@@ -21,10 +16,9 @@ class TestPage2 extends StatefulWidget {
 
 class _TestPage2State extends State<TestPage2> {
   var transactionHelper = TransactionModel();
-  late Stream<QuerySnapshot<Map<String, dynamic>>> dataList = transactionHelper.getTransactionsByPeriod(date,year,1, 'c6NUG8oCKg6wx8tFRc6w');
   late String date =
       DateTime.now().day.toString() + " " + _month(DateTime.now().month);
-  late int year;
+  late int year = DateTime.now().year;
   late int yearBeginWeek =
       DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1)).year;
 
@@ -41,9 +35,12 @@ class _TestPage2State extends State<TestPage2> {
 
   late int selectedButton = 0;
 
+  late Stream<QuerySnapshot<Map<String, dynamic>>> dataList;
+
   @override
   void initState() {
-  dataList = transactionHelper.getTransactionsByPeriod(date,year,1, 'c6NUG8oCKg6wx8tFRc6w');
+    dataList = transactionHelper.getTransactionsByPeriod(
+        date, yearBeginWeek, yearEndWeek, year, 0, 'c6NUG8oCKg6wx8tFRc6w');
 
     _setDate();
     super.initState();
@@ -65,7 +62,7 @@ class _TestPage2State extends State<TestPage2> {
 
     if (selectedButton == 1) {
       setState(() {
-        var splitted = date.split(' ');
+        var splitted = date.split(" ");
         var startDate = DateTime(year, _textToNumberMonth(splitted[1]),
             int.parse(splitted[0]), 0, 0, 0, 0);
         var endDate = DateTime(year, _textToNumberMonth(splitted[1]),
@@ -88,21 +85,11 @@ class _TestPage2State extends State<TestPage2> {
     print(userTransactions);
   }
 
+  _setDataset() {}
+
   getBody() {
-    // _setDate();
-
-    List<Widget> dateButtons = [
-      //list of buttons
-      const DailyButton(),
-      const WeeklyButton(),
-      const MonthlyButton(),
-      const PeriodButton(),
-    ];
-
     getData();
     var size = MediaQuery.of(context).size;
-
-    //CollectionReference users = FirebaseFirestore.instance.collection('users');
 
     final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -182,6 +169,14 @@ class _TestPage2State extends State<TestPage2> {
                     date = DateTime.now().day.toString() +
                         " " +
                         _month(DateTime.now().month);
+
+                    dataList = transactionHelper.getTransactionsByPeriod(
+                        date,
+                        yearBeginWeek,
+                        yearEndWeek,
+                        year,
+                        selectedButton,
+                        'c6NUG8oCKg6wx8tFRc6w');
                   } else if (index == 2) {
                     var startDate = DateTime.now()
                         .subtract(Duration(days: DateTime.now().weekday - 1));
@@ -194,8 +189,23 @@ class _TestPage2State extends State<TestPage2> {
                         endDate.day.toString() +
                         " " +
                         _month(endDate.month);
+
+                    dataList = transactionHelper.getTransactionsByPeriod(
+                        date,
+                        yearBeginWeek,
+                        yearEndWeek,
+                        year,
+                        selectedButton,
+                        'c6NUG8oCKg6wx8tFRc6w');
                   } else if (index == 3) {
-                    date = _month(DateTime.now().month);
+                    date = _month(DateTime.now().month) + " " + year.toString();
+                    dataList = transactionHelper.getTransactionsByPeriod(
+                        date,
+                        yearBeginWeek,
+                        yearEndWeek,
+                        year,
+                        selectedButton,
+                        'c6NUG8oCKg6wx8tFRc6w');
                   }
                 });
               },
@@ -209,12 +219,26 @@ class _TestPage2State extends State<TestPage2> {
                 IconButton(
                     onPressed: () => setState(() {
                           _changeDateDown();
+                          dataList = transactionHelper.getTransactionsByPeriod(
+                              date,
+                              yearBeginWeek,
+                              yearEndWeek,
+                              year,
+                              selectedButton,
+                              'c6NUG8oCKg6wx8tFRc6w');
                         }),
                     icon: const Icon(Icons.arrow_back)),
                 Text(date),
                 IconButton(
                     onPressed: () => setState(() {
                           _changeDateUp();
+                          dataList = transactionHelper.getTransactionsByPeriod(
+                              date,
+                              yearBeginWeek,
+                              yearEndWeek,
+                              year,
+                              selectedButton,
+                              'c6NUG8oCKg6wx8tFRc6w');
                         }),
                     icon: const Icon(Icons.arrow_forward)),
               ],
@@ -363,13 +387,14 @@ class _TestPage2State extends State<TestPage2> {
           " " +
           _month(endDate.month);
     } else if (selectedButton == 3) {
-      date = _month(DateTime.now().month);
+      year = DateTime.now().year;
+      date = _month(DateTime.now().month) + " " + year.toString();
     }
   }
 
   _changeDateDown() {
     if (selectedButton == 1) {
-      var splitted = date.split(' ');
+      var splitted = date.split(" ");
       var day = splitted[0];
       var month = splitted[1];
 
@@ -379,7 +404,7 @@ class _TestPage2State extends State<TestPage2> {
 
       date = resultDate.day.toString() + " " + _month(resultDate.month);
     } else if (selectedButton == 2) {
-      var splitted = date.split(' ');
+      var splitted = date.split(" ");
       var beginDay = splitted[0];
       var beginMonth = splitted[1];
       var endDay = splitted[3];
@@ -394,17 +419,22 @@ class _TestPage2State extends State<TestPage2> {
               .subtract(const Duration(days: 7));
 
       date = tempBeginDay.day.toString() +
-          ' ' +
+          " " +
           _month(tempBeginDay.month) +
-          ' - ' +
+          " - " +
           tempEndDay.day.toString() +
-          ' ' +
+          " " +
           _month(tempEndDay.month);
+
+      yearBeginWeek = tempBeginDay.year;
+      yearEndWeek = tempEndDay.year;
     } else if (selectedButton == 3) {
-      if (date == "Jan") {
-        date = "Dec";
+      var splitted = date.split(" ");
+      if (splitted[0] == "Jan") {
+        year = year - 1;
+        date = "Dec" + " " + year.toString();
       } else {
-        date = _month(((_textToNumberMonth(date)) - 1) % 12);
+        date = _month(((_textToNumberMonth(splitted[0])) - 1)) + " " + year.toString();
       }
     }
 
@@ -413,7 +443,7 @@ class _TestPage2State extends State<TestPage2> {
 
   void _changeDateUp() {
     if (selectedButton == 1) {
-      var splitted = date.split(' ');
+      var splitted = date.split(" ");
       var day = splitted[0];
       var month = splitted[1];
 
@@ -423,7 +453,7 @@ class _TestPage2State extends State<TestPage2> {
 
       date = resultDate.day.toString() + " " + _month(resultDate.month);
     } else if (selectedButton == 2) {
-      var splitted = date.split(' ');
+      var splitted = date.split(" ");
       var beginDay = splitted[0];
       var beginMonth = splitted[1];
       var endDay = splitted[3];
@@ -438,17 +468,22 @@ class _TestPage2State extends State<TestPage2> {
               .add(const Duration(days: 7));
 
       date = tempBeginDay.day.toString() +
-          ' ' +
+          " " +
           _month(tempBeginDay.month) +
           ' - ' +
           tempEndDay.day.toString() +
-          ' ' +
+          " " +
           _month(tempEndDay.month);
+
+      yearBeginWeek = tempBeginDay.year;
+      yearEndWeek = tempEndDay.year;
     } else if (selectedButton == 3) {
-      if (date == "Dec") {
-        date = "Jan";
+      var splitted = date.split(" ");
+      if (splitted[0] == "Dec") {
+        year = year + 1;
+        date = "Jan" + " " + year.toString();
       } else {
-        date = _month(((_textToNumberMonth(date)) + 1) % 12);
+        date = _month(((_textToNumberMonth(splitted[0])) + 1)) + " " + year.toString();
       }
     }
 

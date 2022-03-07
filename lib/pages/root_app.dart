@@ -1,6 +1,7 @@
 import 'package:budget_buddy/pages/profile_page.dart';
 import 'package:budget_buddy/pages/test_page.dart';
 import 'package:budget_buddy/pages/testpage2.dart';
+import 'package:budget_buddy/pages/testpage3.dart';
 import 'package:budget_buddy/theme/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +54,8 @@ class _RootAppState extends State<RootApp> {
     List<Widget> pages = [
       //list of pages
       const DailyPage(),
-      TestPage(),
       TestPage2(),
+      TestPage3(),
       ProfilePage(user: _user),
       CreateBudgetPage(user: _user),
     ];

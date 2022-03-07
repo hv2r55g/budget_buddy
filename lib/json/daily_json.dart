@@ -18,8 +18,8 @@ const List daily = [
     "price": "\$110.00"
   },
   {
-    "icon": "assets/images/eating.png",
-    "name": "Eating",
+    "icon": "assets/images/food.png",
+    "name": "Food",
     "date": "Sun 5PM",
     "price": "\$60.00"
   },

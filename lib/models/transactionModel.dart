@@ -76,10 +76,10 @@ class TransactionModel {
       var endMonth = splitted[4];
 
       var startDate = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
-              int.parse(beginDay));
+              int.parse(beginDay), 0, 0, 0, 0);
 
       var endDate =
-          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay));
+          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay), 23, 59, 59);
       return FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
@@ -90,8 +90,13 @@ class TransactionModel {
           .snapshots();
     } else if (periodType == 3) {
       //Type Monthly
-      String startDate = '';
-      String endDate = '';
+      var splitted = date.split(' ');
+      var month = splitted[0];
+      var year = splitted[1];
+      var startDate = DateTime(int.parse(year), _textToNumberMonth(month),
+          1, 0, 0, 0, 0);
+      var endDate = DateTime(int.parse(year), _textToNumberMonth(month),
+          _numberOfDaysOfMonth(month, int.parse(year)),23, 59, 59);
       return FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
@@ -110,6 +115,9 @@ class TransactionModel {
           .snapshots();
     }
   }
+
+  bool isLeapYear(int year) =>
+      (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
 
   int _textToNumberMonth(String month) {
     if (month == "Jan") {
@@ -140,4 +148,39 @@ class TransactionModel {
       return 0;
     }
   }
+
+  int _numberOfDaysOfMonth(String month, int year) {
+    if (month == "Jan") {
+      return 31;
+    } else if (month == "Feb") {
+      if(isLeapYear(year)){
+        return 29;
+      } else {
+        return 28;
+      }
+    } else if (month == "Mar") {
+      return 31;
+    } else if (month == "Apr") {
+      return 30;
+    } else if (month == "May") {
+      return 31;
+    } else if (month == "Jun") {
+      return 30;
+    } else if (month == "Jul") {
+      return 31;
+    } else if (month == "Aug") {
+      return 31;
+    } else if (month == "Sep") {
+      return 30;
+    } else if (month == "Oct") {
+      return 31;
+    } else if (month == "Nov") {
+      return 30;
+    } else if (month == "Dec") {
+      return 31;
+    } else {
+      return 0;
+    }
+  }
+
 }

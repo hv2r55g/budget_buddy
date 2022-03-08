@@ -7,14 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class TestPage3 extends StatefulWidget {
-  const TestPage3({Key? key}) : super(key: key);
+class TransactionsPage extends StatefulWidget {
+  const TransactionsPage({Key? key}) : super(key: key);
 
   @override
-  _TestPage3State createState() => _TestPage3State();
+  _TransactionsPageState createState() => _TransactionsPageState();
 }
 
-class _TestPage3State extends State<TestPage3> {
+class _TransactionsPageState extends State<TransactionsPage> {
   var transactionHelper = TransactionModel();
   late String date =
       DateTime.now().day.toString() + " " + _month(DateTime.now().month);

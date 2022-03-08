@@ -1,5 +1,4 @@
 import 'package:budget_buddy/pages/profile_page.dart';
-import 'package:budget_buddy/pages/stats_page.dart';
 import 'package:budget_buddy/pages/test_page.dart';
 import 'package:budget_buddy/pages/testpage2.dart';
 import 'package:budget_buddy/pages/transactions_page.dart';
@@ -13,8 +12,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'create_transaction.dart';
 import 'daily_page.dart';
 
-class RootApp extends StatefulWidget {
-  RootApp({Key? key, required User user})
+class RootAppTest extends StatefulWidget {
+  RootAppTest({Key? key, required User user})
       : _user = user,
         super(key: key);
 
@@ -30,12 +29,14 @@ class RootApp extends StatefulWidget {
   }
 
   @override
-  _RootAppState createState() => _RootAppState();
+  _RootAppTestState createState() => _RootAppTestState();
 }
 
-class _RootAppState extends State<RootApp> {
+class _RootAppTestState extends State<RootAppTest> {
   late User _user;
   int pageIndex = 0;
+
+  var _pageController;
 
   @override
   void initState() {
@@ -51,18 +52,22 @@ class _RootAppState extends State<RootApp> {
 
   @override
   Widget build(BuildContext context) {
+
     List<Widget> pages = [
       //list of pages
       TransactionsPage(),
-      StatsPage(),
+      TestPage2(),
       TransactionsPage(),
       ProfilePage(user: _user),
       CreateBudgetPage(user: _user),
     ];
 
     return Scaffold(
-        body: IndexedStack(
-          index: pageIndex,
+        body:PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() => pageIndex = index);
+          },
           children: pages,
         ),
         bottomNavigationBar: getFooter(),
@@ -76,10 +81,10 @@ class _RootAppState extends State<RootApp> {
               size: 25,
             ),
             backgroundColor: Colors.pink
-            //params
-            ),
+          //params
+        ),
         floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked);
+        FloatingActionButtonLocation.centerDocked);
   }
 
   Widget getFooter() {
@@ -101,10 +106,7 @@ class _RootAppState extends State<RootApp> {
       leftCornerRadius: 10,
       iconSize: 25,
       rightCornerRadius: 10,
-      onTap: (index) {
-        selectedTab(index);
-
-      },
+      onTap: _onItemTapped,
       //other params
     );
   }
@@ -121,7 +123,7 @@ class _RootAppState extends State<RootApp> {
 
     // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+    await googleUser?.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
@@ -132,4 +134,17 @@ class _RootAppState extends State<RootApp> {
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      pageIndex = index;
+      //
+      //
+      //using this page controller you can make beautiful animation effects
+      _pageController.animateToPage(index,
+          duration: Duration(milliseconds: 500), curve: Curves.easeOut);
+    });
+  }
 }
+
+

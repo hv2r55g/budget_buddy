@@ -1,4 +1,5 @@
 import 'package:budget_buddy/theme/colors.dart';
+import 'package:budget_buddy/widgets/test_google_button.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/authentication.dart';
@@ -65,6 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                     return const Text('Error initializing Firebase');
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     return const GoogleSignInButton();
+                    //return const GoogleTestSignInButton();
                   }
                   return const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(

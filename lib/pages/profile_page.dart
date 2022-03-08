@@ -48,11 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: firebaseNavy,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: firebaseNavy,
-      ),
+      //backgroundColor: firebaseNavy,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(

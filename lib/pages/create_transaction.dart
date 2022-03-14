@@ -92,8 +92,8 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
             'Comment': _commentSection.text,
           })
           .then((value) => print("Transaction Added"))
-          .catchError((error) => print("Failed to add transaction: $error"))
-          .then((value) => _resetParameters());
+          .catchError((error) => print("Failed to add transaction: $error"));
+          //.then((value) => _resetParameters());
     }
 
     Future<void> updateUniqueTransactionNumber() async {
@@ -402,7 +402,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
                           color: white,
                         ),
                         onPressed: () {
-                          addTransaction();
+                          addTransaction().then((value) => _resetParameters());
                           updateUniqueTransactionNumber();
                         },
                       ),

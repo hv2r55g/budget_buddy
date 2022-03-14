@@ -8,8 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-enum Options { edit, delete }
-
 class TransactionsPage extends StatefulWidget {
   const TransactionsPage({Key? key}) : super(key: key);
 
@@ -42,9 +40,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
   late var sizeTransactionListView = MediaQuery.of(context).size.height - 185;
 
-  String _selection = "";
-
-  int _popupMenuItemIndex = 0;
+  String _selection= "";
 
   @override
   void initState() {
@@ -64,6 +60,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   }
 
   getBody() {
+
     final FirebaseAuth auth = FirebaseAuth.instance;
 
     final User? user = auth.currentUser;
@@ -119,8 +116,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   onPressed: (int index) {
                     setState(() {
                       for (int buttonIndex = 0;
-                          buttonIndex < isSelected.length;
-                          buttonIndex++) {
+                      buttonIndex < isSelected.length;
+                      buttonIndex++) {
                         if (buttonIndex == index) {
                           selectedPeriodButton = index;
                           isSelected[buttonIndex] = true;
@@ -210,16 +207,16 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         constraints: const BoxConstraints(maxHeight: 20),
                         padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                         onPressed: () => setState(() {
-                              _changeDateDown();
-                              dataList =
-                                  transactionHelper.getTransactionsByPeriod(
-                                      date,
-                                      yearBeginWeek,
-                                      yearEndWeek,
-                                      year,
-                                      selectedPeriodButton,
-                                      'c6NUG8oCKg6wx8tFRc6w');
-                            }),
+                          _changeDateDown();
+                          dataList =
+                              transactionHelper.getTransactionsByPeriod(
+                                  date,
+                                  yearBeginWeek,
+                                  yearEndWeek,
+                                  year,
+                                  selectedPeriodButton,
+                                  'c6NUG8oCKg6wx8tFRc6w');
+                        }),
                         icon: const Icon(Icons.arrow_back)),
                     SizedBox(
                       height: 35,
@@ -242,16 +239,16 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         constraints: const BoxConstraints(maxHeight: 20),
                         padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                         onPressed: () => setState(() {
-                              _changeDateUp();
-                              dataList =
-                                  transactionHelper.getTransactionsByPeriod(
-                                      date,
-                                      yearBeginWeek,
-                                      yearEndWeek,
-                                      year,
-                                      selectedPeriodButton,
-                                      'c6NUG8oCKg6wx8tFRc6w');
-                            }),
+                          _changeDateUp();
+                          dataList =
+                              transactionHelper.getTransactionsByPeriod(
+                                  date,
+                                  yearBeginWeek,
+                                  yearEndWeek,
+                                  year,
+                                  selectedPeriodButton,
+                                  'c6NUG8oCKg6wx8tFRc6w');
+                        }),
                         icon: const Icon(Icons.arrow_forward)),
                   ],
                 ),
@@ -270,7 +267,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     return Padding(
                         padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
                         child: ListView.separated(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                             shrinkWrap: true,
                             itemCount: snapshot.data!.docs.length,
                             separatorBuilder: (context, index) {
@@ -283,7 +280,12 @@ class _TransactionsPageState extends State<TransactionsPage> {
                             },
                             itemBuilder: (context, index) {
                               var item = snapshot.data!.docs[index];
-                              return PopupMenuButton(
+                              return PopupMenuButton<String>(
+                                onSelected: (String value) {
+                                  setState(() {
+                                    _selection = value;
+                                  });
+                                },
                                 child: ListTile(
                                   leading: Image.asset(
                                       _getIcon(item["Category"].toString()),
@@ -298,25 +300,25 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   ),
                                   subtitle: Text(
                                     DateTime.parse(item["Date"]
-                                                .toDate()
-                                                .toString())
-                                            .day
-                                            .toString() +
+                                        .toDate()
+                                        .toString())
+                                        .day
+                                        .toString() +
                                         " " +
                                         _month(DateTime.parse(item["Date"]
-                                                .toDate()
-                                                .toString())
+                                            .toDate()
+                                            .toString())
                                             .month) +
                                         " " +
                                         DateTime.parse(item["Date"]
-                                                .toDate()
-                                                .toString())
+                                            .toDate()
+                                            .toString())
                                             .hour
                                             .toString() +
                                         ":" +
                                         _minute(DateTime.parse(item["Date"]
-                                                .toDate()
-                                                .toString())
+                                            .toDate()
+                                            .toString())
                                             .minute
                                             .toString()),
                                     style: const TextStyle(
@@ -326,17 +328,26 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   ),
                                   trailing: _amount(item["Type"].toString(),
                                       item["Amount"].toString()),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => StatsPage()),
+                                    );
+                                  },) , itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'Value1',
+                                  child: Text('Choose value 1'),
                                 ),
-                                itemBuilder: (ctx) => [
-                                  _buildPopupMenuItem(
-                                      'Edit', Icons.edit, Options.edit.index),
-                                  _buildPopupMenuItem('Delete', Icons.delete,
-                                      Options.delete.index),
-                                ],
-                                offset: Offset(10, 5),
-                                onSelected: (value) {
-                                  _onMenuItemSelected(value as int, item.id);
-                                },);
+                                const PopupMenuItem<String>(
+                                  value: 'Value2',
+                                  child: Text('Choose value 2'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'Value3',
+                                  child: Text('Choose value 3'),
+                                ),
+                              ],
+                              );
                             }));
                   } else {
                     return const Center(child: CircularProgressIndicator());
@@ -436,9 +447,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
       date = DateTime.now().day.toString() + " " + _month(DateTime.now().month);
     } else if (selectedPeriodButton == 2) {
       var startDate =
-          DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+      DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
       var endDate =
-          DateTime.now().add(Duration(days: 7 - DateTime.now().weekday));
+      DateTime.now().add(Duration(days: 7 - DateTime.now().weekday));
       date = startDate.day.toString() +
           " " +
           _month(startDate.month) +
@@ -471,12 +482,12 @@ class _TransactionsPageState extends State<TransactionsPage> {
       var endMonth = splitted[4];
 
       var tempBeginDay = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
-              int.parse(beginDay))
+          int.parse(beginDay))
           .subtract(const Duration(days: 7));
 
       var tempEndDay =
-          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
-              .subtract(const Duration(days: 7));
+      DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
+          .subtract(const Duration(days: 7));
 
       date = tempBeginDay.day.toString() +
           " " +
@@ -522,12 +533,12 @@ class _TransactionsPageState extends State<TransactionsPage> {
       var endMonth = splitted[4];
 
       var tempBeginDay = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
-              int.parse(beginDay))
+          int.parse(beginDay))
           .add(const Duration(days: 7));
 
       var tempEndDay =
-          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
-              .add(const Duration(days: 7));
+      DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay))
+          .add(const Duration(days: 7));
 
       date = tempBeginDay.day.toString() +
           " " +
@@ -582,37 +593,5 @@ class _TransactionsPageState extends State<TransactionsPage> {
     } else {
       return 0;
     }
-  }
-
-  _onMenuItemSelected(int value, String transactionDoc) {
-    setState(() {
-      _popupMenuItemIndex = value;
-    });
-
-    if (value == Options.edit.index) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => StatsPage()),
-      );
-    } else if (value == Options.delete.index) {
-
-      transactionHelper.deleteTransaction('c6NUG8oCKg6wx8tFRc6w', transactionDoc);
-    }
-  }
-
-  PopupMenuItem _buildPopupMenuItem(
-      String title, IconData iconData, int position) {
-    return PopupMenuItem(
-      value: position,
-      child: Row(
-        children: [
-          Icon(
-            iconData,
-            color: Colors.black45,
-          ),
-          Text(title),
-        ],
-      ),
-    );
   }
 }

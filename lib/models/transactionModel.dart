@@ -1,14 +1,29 @@
 import 'package:budget_buddy/pages/test_page.dart';
 import 'package:budget_buddy/utils/cache_query.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 
 enum TransactionType { Income, Expense }
 
 class TransactionModel {
   var testPage = TestPage();
 
-  Future<void> _addTransaction(String budgetDoc, String amount, String category,
-      String name, String type, String user) async {
+  Future<void> _addTransaction(
+      String budgetDoc,
+      String amount,
+      String category,
+      String _transactionCategory,
+      String name,
+      String type,
+      String user,
+      TextEditingController _transactionAmount,
+      TextEditingController _transactionName,
+      String _transactionType,
+      User _user,
+      String userName,
+      DateTime _selectedDate,
+      TextEditingController _commentSection) async {
     // Call the user's CollectionReference to add a new user
     DocumentSnapshot variable = await FirebaseFirestore.instance
         .collection('budgets')
@@ -24,14 +39,39 @@ class TransactionModel {
     return transactions
         .add({
           'TransactionNumber': transactionNumber,
-          'Amount': double.parse(amount),
-          'Category': category,
-          'Name': name,
-          'Type': type,
-          'User': user,
+          'Amount': double.parse(_transactionAmount.text),
+          'Category': _transactionCategory,
+          'Name': _transactionName.text,
+          'Type': _transactionType,
+          'UserId': _user.uid,
+          'UserName': userName,
+          'Date': _selectedDate,
+          'Comment': _commentSection.text,
         })
         .then((value) => print("Transaction Added"))
         .catchError((error) => print("Failed to add transaction: $error"));
+  }
+
+  Future<void> deleteTransaction(String budgetDoc, String transactionDoc) async {
+    //De collectionreference moet zijn volgens de vorm:
+
+    // CollectionReference transactions = FirebaseFirestore.instance
+    //     .collection('budgets')
+    //     .doc(budgetDoc)
+    //     .collection('transactions')
+    //     .doc(de transactiondoc
+
+
+
+    final transactions = FirebaseFirestore.instance
+        .collection('budgets')
+        .doc(budgetDoc)
+        .collection('transactions');
+    transactions
+        .doc(transactionDoc) // <-- Doc ID to be deleted.
+        .delete() // <-- Delete
+        .then((_) => print('Deleted'))
+        .catchError((error) => print('Delete failed: $error'));
   }
 
   String testBudgetDoc = 'c6NUG8oCKg6wx8tFRc6w';
@@ -76,10 +116,10 @@ class TransactionModel {
       var endMonth = splitted[4];
 
       var startDate = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
-              int.parse(beginDay), 0, 0, 0, 0);
+          int.parse(beginDay), 0, 0, 0, 0);
 
-      var endDate =
-          DateTime(yearEndWeek, _textToNumberMonth(endMonth), int.parse(endDay), 23, 59, 59);
+      var endDate = DateTime(yearEndWeek, _textToNumberMonth(endMonth),
+          int.parse(endDay), 23, 59, 59);
       return FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
@@ -93,10 +133,10 @@ class TransactionModel {
       var splitted = date.split(' ');
       var month = splitted[0];
       var year = splitted[1];
-      var startDate = DateTime(int.parse(year), _textToNumberMonth(month),
-          1, 0, 0, 0, 0);
+      var startDate =
+          DateTime(int.parse(year), _textToNumberMonth(month), 1, 0, 0, 0, 0);
       var endDate = DateTime(int.parse(year), _textToNumberMonth(month),
-          _numberOfDaysOfMonth(month, int.parse(year)),23, 59, 59);
+          _numberOfDaysOfMonth(month, int.parse(year)), 23, 59, 59);
       return FirebaseFirestore.instance
           .collection('budgets')
           .doc(budgetDoc)
@@ -153,7 +193,7 @@ class TransactionModel {
     if (month == "Jan") {
       return 31;
     } else if (month == "Feb") {
-      if(isLeapYear(year)){
+      if (isLeapYear(year)) {
         return 29;
       } else {
         return 28;
@@ -182,5 +222,4 @@ class TransactionModel {
       return 0;
     }
   }
-
 }

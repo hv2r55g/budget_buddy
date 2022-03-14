@@ -72,7 +72,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
     return Column(
       children: [
         Container(
-          decoration: BoxDecoration(color: white, boxShadow: [
+
+          decoration: BoxDecoration(borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20.0),
+    bottomRight: Radius.circular(20.0)),
+color: white, boxShadow: [
             BoxShadow(
               color: grey.withOpacity(0.01),
               spreadRadius: 10,
@@ -81,126 +84,129 @@ class _TransactionsPageState extends State<TransactionsPage> {
             ),
           ]),
           child: Column(
+
             children: [
               const SizedBox(height: 45),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                ToggleButtons(
-                  renderBorder: false,
-                  selectedColor: Colors.pink,
-                  fillColor: Colors.transparent,
-                  color: Colors.black,
-                  constraints: const BoxConstraints(maxHeight: 20),
-                  children: const <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                      child: Text(
-                        "All",
+              Container(
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  ToggleButtons(
+                    renderBorder: false,
+                    selectedColor: Colors.pink,
+                    fillColor: Colors.transparent,
+                    color: Colors.black,
+                    constraints: const BoxConstraints(maxHeight: 20),
+                    children: const <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                        child: Text(
+                          "All",
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                      child: Text(
-                        "Daily",
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                        child: Text(
+                          "Daily",
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                      child: Text(
-                        "Weekly",
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                        child: Text(
+                          "Weekly",
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                      child: Text(
-                        "Monthly",
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                        child: Text(
+                          "Monthly",
+                        ),
                       ),
-                    ),
-                  ],
-                  onPressed: (int index) {
-                    setState(() {
-                      for (int buttonIndex = 0;
-                          buttonIndex < isSelected.length;
-                          buttonIndex++) {
-                        if (buttonIndex == index) {
-                          selectedPeriodButton = index;
-                          isSelected[buttonIndex] = true;
-                        } else {
-                          isSelected[buttonIndex] = false;
+                    ],
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int buttonIndex = 0;
+                            buttonIndex < isSelected.length;
+                            buttonIndex++) {
+                          if (buttonIndex == index) {
+                            selectedPeriodButton = index;
+                            isSelected[buttonIndex] = true;
+                          } else {
+                            isSelected[buttonIndex] = false;
+                          }
                         }
-                      }
 
-                      year = DateTime.now().year;
+                        year = DateTime.now().year;
 
-                      if (index == 0) {
-                        date = DateTime.now().day.toString() +
-                            " " +
-                            _month(DateTime.now().month);
+                        if (index == 0) {
+                          date = DateTime.now().day.toString() +
+                              " " +
+                              _month(DateTime.now().month);
 
-                        dataList = transactionHelper.getTransactionsByPeriod(
-                            date,
-                            yearBeginWeek,
-                            yearEndWeek,
-                            year,
-                            selectedPeriodButton,
-                            'c6NUG8oCKg6wx8tFRc6w');
+                          dataList = transactionHelper.getTransactionsByPeriod(
+                              date,
+                              yearBeginWeek,
+                              yearEndWeek,
+                              year,
+                              selectedPeriodButton,
+                              'c6NUG8oCKg6wx8tFRc6w');
 
-                        sizeTransactionListView =
-                            MediaQuery.of(context).size.height - 185;
-                      } else if (index == 1) {
-                        date = DateTime.now().day.toString() +
-                            " " +
-                            _month(DateTime.now().month);
+                          sizeTransactionListView =
+                              MediaQuery.of(context).size.height - 185;
+                        } else if (index == 1) {
+                          date = DateTime.now().day.toString() +
+                              " " +
+                              _month(DateTime.now().month);
 
-                        dataList = transactionHelper.getTransactionsByPeriod(
-                            date,
-                            yearBeginWeek,
-                            yearEndWeek,
-                            year,
-                            selectedPeriodButton,
-                            'c6NUG8oCKg6wx8tFRc6w');
-                        sizeTransactionListView =
-                            MediaQuery.of(context).size.height - 210;
-                      } else if (index == 2) {
-                        var startDate = DateTime.now().subtract(
-                            Duration(days: DateTime.now().weekday - 1));
-                        var endDate = DateTime.now()
-                            .add(Duration(days: 7 - DateTime.now().weekday));
-                        date = startDate.day.toString() +
-                            " " +
-                            _month(startDate.month) +
-                            " - " +
-                            endDate.day.toString() +
-                            " " +
-                            _month(endDate.month);
+                          dataList = transactionHelper.getTransactionsByPeriod(
+                              date,
+                              yearBeginWeek,
+                              yearEndWeek,
+                              year,
+                              selectedPeriodButton,
+                              'c6NUG8oCKg6wx8tFRc6w');
+                          sizeTransactionListView =
+                              MediaQuery.of(context).size.height - 210;
+                        } else if (index == 2) {
+                          var startDate = DateTime.now().subtract(
+                              Duration(days: DateTime.now().weekday - 1));
+                          var endDate = DateTime.now()
+                              .add(Duration(days: 7 - DateTime.now().weekday));
+                          date = startDate.day.toString() +
+                              " " +
+                              _month(startDate.month) +
+                              " - " +
+                              endDate.day.toString() +
+                              " " +
+                              _month(endDate.month);
 
-                        dataList = transactionHelper.getTransactionsByPeriod(
-                            date,
-                            yearBeginWeek,
-                            yearEndWeek,
-                            year,
-                            selectedPeriodButton,
-                            'c6NUG8oCKg6wx8tFRc6w');
-                        sizeTransactionListView =
-                            MediaQuery.of(context).size.height - 210;
-                      } else if (index == 3) {
-                        date = _month(DateTime.now().month) +
-                            " " +
-                            year.toString();
-                        dataList = transactionHelper.getTransactionsByPeriod(
-                            date,
-                            yearBeginWeek,
-                            yearEndWeek,
-                            year,
-                            selectedPeriodButton,
-                            'c6NUG8oCKg6wx8tFRc6w');
-                        sizeTransactionListView =
-                            MediaQuery.of(context).size.height - 210;
-                      }
-                    });
-                  },
-                  isSelected: isSelected,
-                ),
-              ]),
+                          dataList = transactionHelper.getTransactionsByPeriod(
+                              date,
+                              yearBeginWeek,
+                              yearEndWeek,
+                              year,
+                              selectedPeriodButton,
+                              'c6NUG8oCKg6wx8tFRc6w');
+                          sizeTransactionListView =
+                              MediaQuery.of(context).size.height - 210;
+                        } else if (index == 3) {
+                          date = _month(DateTime.now().month) +
+                              " " +
+                              year.toString();
+                          dataList = transactionHelper.getTransactionsByPeriod(
+                              date,
+                              yearBeginWeek,
+                              yearEndWeek,
+                              year,
+                              selectedPeriodButton,
+                              'c6NUG8oCKg6wx8tFRc6w');
+                          sizeTransactionListView =
+                              MediaQuery.of(context).size.height - 210;
+                        }
+                      });
+                    },
+                    isSelected: isSelected,
+                  ),
+                ]),
+              ),
               if (!isSelected[0])
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -333,10 +339,11 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   _buildPopupMenuItem('Delete', Icons.delete,
                                       Options.delete.index),
                                 ],
-                                offset: Offset(10, 5),
+                                offset: const Offset(10, 5),
                                 onSelected: (value) {
                                   _onMenuItemSelected(value as int, item.id);
-                                },);
+                                }, shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),);
                             }));
                   } else {
                     return const Center(child: CircularProgressIndicator());

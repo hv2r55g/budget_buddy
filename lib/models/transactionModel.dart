@@ -7,10 +7,50 @@ import 'package:flutter/cupertino.dart';
 enum TransactionType { Income, Expense }
 
 class TransactionModel {
-  var testPage = TestPage();
 
-  Future<void> _addTransaction(
-      String budgetDoc,
+  late double amount;
+  late String category;
+  late String comment;
+  late DateTime selectedDate;
+  late String name;
+  late int transactionNumber;
+  late String type;
+  late String userId;
+  late String username;
+
+
+  TransactionModel(this.amount,
+      this.category,
+      this.comment,
+      this.selectedDate,
+      this.name,
+      this.transactionNumber,
+      this.type,
+      this.userId,
+      this.username,
+      this.testBudgetDoc);
+
+  TransactionModel.empty();
+
+  TransactionModel.fromJson(Map<String, dynamic> json)
+      :
+        amount = json['Amount'],
+        category = json['Category'],
+        comment = json['Comment'],
+        selectedDate = json['Date'],
+        name = json['Name'],
+        transactionNumber = json['TransactionNumber'],
+        type = json['Type'],
+        userId = json['UserId'],
+        username = json['UserName'],
+        testBudgetDoc = json[''];
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+  };
+
+
+  Future<void> _addTransaction(String budgetDoc,
       String amount,
       String category,
       String _transactionCategory,
@@ -38,21 +78,22 @@ class TransactionModel {
 
     return transactions
         .add({
-          'TransactionNumber': transactionNumber,
-          'Amount': double.parse(_transactionAmount.text),
-          'Category': _transactionCategory,
-          'Name': _transactionName.text,
-          'Type': _transactionType,
-          'UserId': _user.uid,
-          'UserName': userName,
-          'Date': _selectedDate,
-          'Comment': _commentSection.text,
-        })
+      'TransactionNumber': transactionNumber,
+      'Amount': double.parse(_transactionAmount.text),
+      'Category': _transactionCategory,
+      'Name': _transactionName.text,
+      'Type': _transactionType,
+      'UserId': _user.uid,
+      'UserName': userName,
+      'Date': _selectedDate,
+      'Comment': _commentSection.text,
+    })
         .then((value) => print("Transaction Added"))
         .catchError((error) => print("Failed to add transaction: $error"));
   }
 
-  Future<void> deleteTransaction(String budgetDoc, String transactionDoc) async {
+  Future<void> deleteTransaction(String budgetDoc,
+      String transactionDoc) async {
     //De collectionreference moet zijn volgens de vorm:
 
     // CollectionReference transactions = FirebaseFirestore.instance
@@ -60,7 +101,6 @@ class TransactionModel {
     //     .doc(budgetDoc)
     //     .collection('transactions')
     //     .doc(de transactiondoc
-
 
 
     final transactions = FirebaseFirestore.instance
@@ -94,9 +134,19 @@ class TransactionModel {
     if (periodType == 1) {
       //Type daily
       var splitted = date.split(' ');
-      var startDate = DateTime(DateTime.now().year,
-          _textToNumberMonth(splitted[1]), int.parse(splitted[0]), 0, 0, 0, 0);
-      var endDate = DateTime(DateTime.now().year,
+      var startDate = DateTime(
+          DateTime
+              .now()
+              .year,
+          _textToNumberMonth(splitted[1]),
+          int.parse(splitted[0]),
+          0,
+          0,
+          0,
+          0);
+      var endDate = DateTime(DateTime
+          .now()
+          .year,
           _textToNumberMonth(splitted[1]), int.parse(splitted[0]), 23, 59, 59);
 
       return FirebaseFirestore.instance
@@ -115,8 +165,14 @@ class TransactionModel {
       var endDay = splitted[3];
       var endMonth = splitted[4];
 
-      var startDate = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
-          int.parse(beginDay), 0, 0, 0, 0);
+      var startDate = DateTime(
+          yearBeginWeek,
+          _textToNumberMonth(beginMonth),
+          int.parse(beginDay),
+          0,
+          0,
+          0,
+          0);
 
       var endDate = DateTime(yearEndWeek, _textToNumberMonth(endMonth),
           int.parse(endDay), 23, 59, 59);
@@ -134,7 +190,14 @@ class TransactionModel {
       var month = splitted[0];
       var year = splitted[1];
       var startDate =
-          DateTime(int.parse(year), _textToNumberMonth(month), 1, 0, 0, 0, 0);
+      DateTime(
+          int.parse(year),
+          _textToNumberMonth(month),
+          1,
+          0,
+          0,
+          0,
+          0);
       var endDate = DateTime(int.parse(year), _textToNumberMonth(month),
           _numberOfDaysOfMonth(month, int.parse(year)), 23, 59, 59);
       return FirebaseFirestore.instance

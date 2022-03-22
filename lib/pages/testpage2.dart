@@ -15,7 +15,7 @@ class TestPage2 extends StatefulWidget {
 }
 
 class _TestPage2State extends State<TestPage2> {
-  var transactionHelper = TransactionModel();
+  var transactionHelper = TransactionModel.empty();
   late String date =
       DateTime.now().day.toString() + " " + _month(DateTime.now().month);
   late int year = DateTime.now().year;
@@ -49,7 +49,7 @@ class _TestPage2State extends State<TestPage2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: grey.withOpacity(0.05),
+      backgroundColor: Colors.grey.shade50,
       body: getBody(),
     );
   }

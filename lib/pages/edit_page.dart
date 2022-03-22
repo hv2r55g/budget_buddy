@@ -7,19 +7,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CreateBudgetPage extends StatefulWidget {
-  const CreateBudgetPage({Key? key, required User user})
-      : _user = user,
+class EditTransactionPage extends StatefulWidget {
+  const EditTransactionPage(String transactionDoc, {Key? key})
+      : _transactionDoc = transactionDoc,
         super(key: key);
 
-  final User _user;
+  final String _transactionDoc;
 
   @override
-  _CreateBudgetPageState createState() => _CreateBudgetPageState();
+  _EditTransactionPageState createState() => _EditTransactionPageState();
 }
 
-class _CreateBudgetPageState extends State<CreateBudgetPage> {
+class _EditTransactionPageState extends State<EditTransactionPage> {
   late User _user;
+  late String _transactionDoc;
   int activeCategory = 0;
   final TextEditingController _transactionName =
       TextEditingController(text: "");
@@ -40,14 +41,24 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
 
   @override
   void initState() {
-    _user = widget._user;
-
+    _transactionDoc = widget._transactionDoc;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 70,
+        centerTitle: true,
+        title: const Text(
+          "Edit transaction",
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: black),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       backgroundColor: Colors.grey.shade50,
       body: getBody(),
     );
@@ -93,7 +104,7 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
           })
           .then((value) => print("Transaction Added"))
           .catchError((error) => print("Failed to add transaction: $error"));
-          //.then((value) => _resetParameters());
+      //.then((value) => _resetParameters());
     }
 
     Future<void> updateUniqueTransactionNumber() async {
@@ -115,36 +126,36 @@ class _CreateBudgetPageState extends State<CreateBudgetPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            decoration: BoxDecoration(color: white, boxShadow: [
-              BoxShadow(
-                color: grey.withOpacity(0.01),
-                spreadRadius: 10,
-                blurRadius: 3,
-                // changes position of shadow
-              ),
-            ]),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 60, right: 20, left: 20, bottom: 25),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        "Create transaction",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: black),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Container(
+          //   decoration: BoxDecoration(color: white, boxShadow: [
+          //     BoxShadow(
+          //       color: grey.withOpacity(0.01),
+          //       spreadRadius: 10,
+          //       blurRadius: 3,
+          //       // changes position of shadow
+          //     ),
+          //   ]),
+          //   child: Padding(
+          //     padding: const EdgeInsets.only(
+          //         top: 60, right: 20, left: 20, bottom: 25),
+          //     child: Column(
+          //       children: [
+          //         Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: const [
+          //             Text(
+          //               "Edit transaction",
+          //               style: TextStyle(
+          //                   fontSize: 20,
+          //                   fontWeight: FontWeight.bold,
+          //                   color: black),
+          //             )
+          //           ],
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
             child: Text(

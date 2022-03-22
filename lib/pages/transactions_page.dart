@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:budget_buddy/pages/edit_page.dart';
 import 'package:budget_buddy/pages/stats_page.dart';
 import 'package:budget_buddy/theme/colors.dart';
 import 'package:budget_buddy/utils/cache_query.dart';
@@ -18,7 +19,7 @@ class TransactionsPage extends StatefulWidget {
 }
 
 class _TransactionsPageState extends State<TransactionsPage> {
-  var transactionHelper = TransactionModel();
+  var transactionHelper = TransactionModel.empty();
   late String date =
       DateTime.now().day.toString() + " " + _month(DateTime.now().month);
   late int year = DateTime.now().year;
@@ -58,7 +59,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: grey.withOpacity(0.05),
+      backgroundColor: Colors.grey.shade50,
       body: getBody(),
     );
   }
@@ -599,7 +600,7 @@ color: white, boxShadow: [
     if (value == Options.edit.index) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => StatsPage()),
+        MaterialPageRoute(builder: (context) => EditTransactionPage(transactionDoc)),
       );
     } else if (value == Options.delete.index) {
 

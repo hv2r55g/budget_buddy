@@ -1,4 +1,5 @@
 import 'package:budget_buddy/json/create_budget_json.dart';
+import 'package:budget_buddy/models/transactionModel.dart';
 import 'package:budget_buddy/pages/root_app.dart';
 import 'package:budget_buddy/theme/colors.dart';
 import 'package:budget_buddy/utils/cache_query.dart';
@@ -42,7 +43,20 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
   @override
   void initState() {
     _transactionDoc = widget._transactionDoc;
+
+    setParams();
     super.initState();
+  }
+
+  Future<void> setParams() async {
+    TransactionModel test = TransactionModel.fromDocumentSnapshot(await FirebaseFirestore.instance
+        .collection('budgets')
+        .doc('c6NUG8oCKg6wx8tFRc6w')
+        .collection('transactions')
+        .doc(_transactionDoc).get());
+    test
+        .retrieveTransaction('c6NUG8oCKg6wx8tFRc6w', _transactionDoc)
+        .then((value) => print(test.amount));
   }
 
   @override

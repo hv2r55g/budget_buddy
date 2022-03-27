@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 enum TransactionType { Income, Expense }
 
 class TransactionModel {
-
   late double amount;
   late String category;
   late String comment;
@@ -18,8 +17,8 @@ class TransactionModel {
   late String userId;
   late String username;
 
-
-  TransactionModel(this.amount,
+  TransactionModel(
+      this.amount,
       this.category,
       this.comment,
       this.selectedDate,
@@ -33,8 +32,7 @@ class TransactionModel {
   TransactionModel.empty();
 
   TransactionModel.fromJson(Map<String, dynamic> json)
-      :
-        amount = json['Amount'],
+      : amount = json['Amount'],
         category = json['Category'],
         comment = json['Comment'],
         selectedDate = json['Date'],
@@ -46,11 +44,50 @@ class TransactionModel {
         testBudgetDoc = json[''];
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-  };
+        'name': name,
+      };
 
+  TransactionModel.fromMap(Map<String, dynamic> transactionModelMap)
+      : amount = transactionModelMap['Amount'],
+        category = transactionModelMap['Category'],
+        comment = transactionModelMap['Comment'],
+        selectedDate = transactionModelMap['Date'],
+        name = transactionModelMap['Name'],
+        transactionNumber = transactionModelMap['TransactionNumber'],
+        type = transactionModelMap['Type'],
+        userId = transactionModelMap['UserId'],
+        username = transactionModelMap['UserName'],
+        testBudgetDoc = transactionModelMap[''];
 
-  Future<void> _addTransaction(String budgetDoc,
+  TransactionModel.fromDocumentSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> doc)
+      : amount = doc.data()!['Amount'],
+        category = doc.data()!['Category'],
+        comment = doc.data()!['Comment'],
+        selectedDate = doc.data()!['Date'].toDate(),
+        name = doc.data()!['Name'],
+        transactionNumber = doc.data()!['TransactionNumber'],
+        type = doc.data()!['Type'],
+        userId = doc.data()!['UserId'],
+        username = doc.data()!['UserName'];
+        //testBudgetDoc = doc.data()![''];
+
+  Future<TransactionModel> retrieveTransaction(
+      String budgetDoc, String transactionDoc) async {
+    var transactionData = await FirebaseFirestore.instance
+        .collection('budgets')
+        .doc(budgetDoc)
+        .collection('transactions')
+        .doc(transactionDoc).get();
+
+    TransactionModel transaction =
+        TransactionModel.fromDocumentSnapshot(transactionData);
+
+    return transaction;
+  }
+
+  Future<void> _addTransaction(
+      String budgetDoc,
       String amount,
       String category,
       String _transactionCategory,
@@ -78,22 +115,22 @@ class TransactionModel {
 
     return transactions
         .add({
-      'TransactionNumber': transactionNumber,
-      'Amount': double.parse(_transactionAmount.text),
-      'Category': _transactionCategory,
-      'Name': _transactionName.text,
-      'Type': _transactionType,
-      'UserId': _user.uid,
-      'UserName': userName,
-      'Date': _selectedDate,
-      'Comment': _commentSection.text,
-    })
+          'TransactionNumber': transactionNumber,
+          'Amount': double.parse(_transactionAmount.text),
+          'Category': _transactionCategory,
+          'Name': _transactionName.text,
+          'Type': _transactionType,
+          'UserId': _user.uid,
+          'UserName': userName,
+          'Date': _selectedDate,
+          'Comment': _commentSection.text,
+        })
         .then((value) => print("Transaction Added"))
         .catchError((error) => print("Failed to add transaction: $error"));
   }
 
-  Future<void> deleteTransaction(String budgetDoc,
-      String transactionDoc) async {
+  Future<void> deleteTransaction(
+      String budgetDoc, String transactionDoc) async {
     //De collectionreference moet zijn volgens de vorm:
 
     // CollectionReference transactions = FirebaseFirestore.instance
@@ -101,7 +138,6 @@ class TransactionModel {
     //     .doc(budgetDoc)
     //     .collection('transactions')
     //     .doc(de transactiondoc
-
 
     final transactions = FirebaseFirestore.instance
         .collection('budgets')
@@ -134,19 +170,9 @@ class TransactionModel {
     if (periodType == 1) {
       //Type daily
       var splitted = date.split(' ');
-      var startDate = DateTime(
-          DateTime
-              .now()
-              .year,
-          _textToNumberMonth(splitted[1]),
-          int.parse(splitted[0]),
-          0,
-          0,
-          0,
-          0);
-      var endDate = DateTime(DateTime
-          .now()
-          .year,
+      var startDate = DateTime(DateTime.now().year,
+          _textToNumberMonth(splitted[1]), int.parse(splitted[0]), 0, 0, 0, 0);
+      var endDate = DateTime(DateTime.now().year,
           _textToNumberMonth(splitted[1]), int.parse(splitted[0]), 23, 59, 59);
 
       return FirebaseFirestore.instance
@@ -165,14 +191,8 @@ class TransactionModel {
       var endDay = splitted[3];
       var endMonth = splitted[4];
 
-      var startDate = DateTime(
-          yearBeginWeek,
-          _textToNumberMonth(beginMonth),
-          int.parse(beginDay),
-          0,
-          0,
-          0,
-          0);
+      var startDate = DateTime(yearBeginWeek, _textToNumberMonth(beginMonth),
+          int.parse(beginDay), 0, 0, 0, 0);
 
       var endDate = DateTime(yearEndWeek, _textToNumberMonth(endMonth),
           int.parse(endDay), 23, 59, 59);
@@ -190,14 +210,7 @@ class TransactionModel {
       var month = splitted[0];
       var year = splitted[1];
       var startDate =
-      DateTime(
-          int.parse(year),
-          _textToNumberMonth(month),
-          1,
-          0,
-          0,
-          0,
-          0);
+          DateTime(int.parse(year), _textToNumberMonth(month), 1, 0, 0, 0, 0);
       var endDate = DateTime(int.parse(year), _textToNumberMonth(month),
           _numberOfDaysOfMonth(month, int.parse(year)), 23, 59, 59);
       return FirebaseFirestore.instance

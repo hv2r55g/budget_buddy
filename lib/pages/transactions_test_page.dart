@@ -16,7 +16,7 @@ class TransactionsPage extends StatefulWidget {
 }
 
 class _TransactionsPageState extends State<TransactionsPage> {
-  var transactionHelper = TransactionModel();
+  var transactionHelper = TransactionModel.empty();
   late String date =
       DateTime.now().day.toString() + " " + _month(DateTime.now().month);
   late int year = DateTime.now().year;
